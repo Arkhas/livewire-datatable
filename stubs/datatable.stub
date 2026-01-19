@@ -1,0 +1,99 @@
+<?php
+
+namespace {{ namespace }};
+
+use Livewire\Component;
+use Arkhas\LivewireDatatable\Traits\WithDatatable;
+use Arkhas\LivewireDatatable\Table\EloquentTable;
+use Arkhas\LivewireDatatable\Columns\Column;
+use Arkhas\LivewireDatatable\Columns\CheckboxColumn;
+use Arkhas\LivewireDatatable\Columns\ActionColumn;
+use Arkhas\LivewireDatatable\Filters\Filter;
+use Arkhas\LivewireDatatable\Filters\FilterOption;
+use Arkhas\LivewireDatatable\Actions\TableAction;
+use Arkhas\LivewireDatatable\Actions\ColumnAction;
+use Arkhas\LivewireDatatable\Actions\ColumnActionGroup;
+use App\Models\{{ model }};
+
+class {{ class }} extends Component
+{
+    use WithDatatable;
+
+    public function setup(): void
+    {
+        $table = new EloquentTable({{ model }}::query());
+
+        $table
+            ->exportName('{{ model }}-' . date('Y-m-d'))
+            ->searchable(['name']) // Add your searchable columns here
+            ->columns([
+                CheckboxColumn::make(),
+
+                Column::make('id')
+                    ->label('ID')
+                    ->sortable(),
+
+                Column::make('name')
+                    ->label('Name')
+                    ->sortable()
+                    ->html(fn({{ model }} $record) => $record->name),
+
+                // Add more columns here
+
+                ActionColumn::make()
+                    ->action(
+                        ColumnActionGroup::make()
+                            ->icon('Ellipsis')
+                            ->actions([
+                                ColumnAction::make('edit')
+                                    ->label('Edit')
+                                    ->icon('Edit')
+                                    ->url(fn({{ model }} $record) => route('{{ model }}.edit', $record->id)),
+
+                                ColumnAction::make('delete')
+                                    ->label('Delete')
+                                    ->icon('Trash2')
+                                    ->confirm(fn({{ model }} $record) => [
+                                        'title' => 'Delete {{ model }}',
+                                        'message' => 'Are you sure you want to delete this record?',
+                                        'confirm' => 'Delete',
+                                        'cancel' => 'Cancel',
+                                    ])
+                                    ->handle(function ({{ model }} $record) {
+                                        $record->delete();
+                                        return ['success' => true, 'message' => '{{ model }} deleted successfully'];
+                                    }),
+                            ])
+                    ),
+            ])
+            ->filters([
+                // Add your filters here
+            ])
+            ->actions([
+                TableAction::make('delete')
+                    ->label('Delete Selected')
+                    ->icon('Trash2')
+                    ->props(['variant' => 'destructive', 'size' => 'sm'])
+                    ->confirm(fn($ids) => [
+                        'title' => 'Delete ' . count($ids) . ' record(s)',
+                        'message' => 'Are you sure you want to delete the selected records?',
+                        'confirm' => 'Delete',
+                        'cancel' => 'Cancel',
+                    ])
+                    ->handle(function ($ids) {
+                        {{ model }}::query()->whereIn('id', $ids)->delete();
+                        return ['success' => true, 'message' => 'Records deleted successfully'];
+                    }),
+            ]);
+
+        $this->table($table);
+    }
+
+    public function render()
+    {
+        return view('livewire-datatable::datatable', [
+            'table' => $this->getTable(),
+            'data' => $this->getData(),
+        ]);
+    }
+}

@@ -69,10 +69,12 @@ class EloquentTable
         $query = $this->getQuery();
 
         // Apply search
-        if ($search && $this->searchColumns) {
-            $query->where(function ($q) use ($search) {
-                foreach ($this->searchColumns as $column) {
-                    $q->orWhere($column, 'like', "%{$search}%");
+        if ($search && $this->isSearchable()) {
+            $searchColumns = $this->getResolvedSearchColumns();
+            
+            $query->where(function ($q) use ($search, $searchColumns) {
+                foreach ($searchColumns as $column) {
+                    $this->applySearchCondition($q, $column, $search);
                 }
             });
         }
@@ -122,7 +124,49 @@ class EloquentTable
             'filters' => collect($this->filters)->map->toArray()->all(),
             'actions' => collect($this->actions)->map->toArray()->all(),
             'exportName' => $this->exportName,
-            'searchable' => !empty($this->searchColumns),
+            'searchable' => $this->isSearchable(),
         ];
+    }
+
+    /**
+     * Get the resolved search columns (either explicit or from columns).
+     */
+    protected function getResolvedSearchColumns(): array
+    {
+        // If explicit search columns are defined, use them
+        if (!empty($this->searchColumns)) {
+            return $this->searchColumns;
+        }
+
+        // If searchFromColumns is enabled, get column names from defined columns
+        if ($this->shouldSearchFromColumns()) {
+            return collect($this->columns)
+                ->filter(function ($column) {
+                    // Exclude special columns (ActionColumn, CheckboxColumn)
+                    return !str_starts_with($column->getName(), '__');
+                })
+                ->map(fn($column) => $column->getName())
+                ->values()
+                ->all();
+        }
+
+        return [];
+    }
+
+    /**
+     * Apply a search condition for a column (handles relationships).
+     */
+    protected function applySearchCondition(Builder $query, string $column, string $search): void
+    {
+        // Check if column contains a dot (relation)
+        if (str_contains($column, '.')) {
+            $parts = explode('.', $column);
+            $columnName = array_pop($parts);
+            $relation = implode('.', $parts);
+            
+            $query->orWhereRelation($relation, $columnName, 'like', "%{$search}%");
+        } else {
+            $query->orWhere($column, 'like', "%{$search}%");
+        }
     }
 }

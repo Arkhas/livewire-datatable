@@ -10,7 +10,7 @@
             <flux:dropdown position="bottom end">
                 <flux:button variant="ghost" size="sm" icon="{{ strtolower($action->getIcon() ?? 'ellipsis') }}" />
 
-                <flux:menu>
+                <flux:menu keep-open>
                     @foreach($action->getActions() as $subAction)
                         @php
                             $actionData = $subAction->toArrayForModel($row);
@@ -52,7 +52,7 @@
                     variant="ghost"
                     size="sm"
                     :href="$actionData['url']"
-                    @if($actionData['icon']) icon="{{ strtolower($actionData['icon']) }}" @endif
+                    :icon="$actionData['icon'] ? strtolower($actionData['icon']) : null"
                 >
                     @if($actionData['label'])
                         {{ $actionData['label'] }}
@@ -63,7 +63,7 @@
                     variant="ghost"
                     size="sm"
                     wire:click="executeRowAction('{{ $action->getName() }}', {{ $row->id }})"
-                    @if($actionData['icon']) icon="{{ strtolower($actionData['icon']) }}" @endif
+                    :icon="$actionData['icon'] ? strtolower($actionData['icon']) : null"
                 >
                     @if($actionData['label'])
                         {{ $actionData['label'] }}

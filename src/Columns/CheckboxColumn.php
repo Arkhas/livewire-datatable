@@ -16,7 +16,7 @@ class CheckboxColumn extends Column
     /**
      * Create a new checkbox column instance.
      */
-    public static function make(): static
+    public static function make(string $name = '__checkbox'): static
     {
         return new static();
     }

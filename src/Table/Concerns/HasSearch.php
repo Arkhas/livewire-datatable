@@ -6,13 +6,30 @@ trait HasSearch
 {
     protected array $searchColumns = [];
     protected ?string $searchPlaceholder = null;
+    protected bool $searchFromColumns = true;
+    protected bool $searchEnabled = true;
 
     /**
      * Set the searchable columns.
      */
-    public function searchable(array $columns): static
+    public function searchable(array $columns = []): static
     {
-        $this->searchColumns = $columns;
+        $this->searchEnabled = true;
+        
+        if (!empty($columns)) {
+            $this->searchColumns = $columns;
+            $this->searchFromColumns = false;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Disable search.
+     */
+    public function notSearchable(): static
+    {
+        $this->searchEnabled = false;
 
         return $this;
     }
@@ -26,11 +43,19 @@ trait HasSearch
     }
 
     /**
+     * Check if search should use columns automatically.
+     */
+    public function shouldSearchFromColumns(): bool
+    {
+        return $this->searchFromColumns && empty($this->searchColumns);
+    }
+
+    /**
      * Check if search is enabled.
      */
     public function isSearchable(): bool
     {
-        return !empty($this->searchColumns);
+        return $this->searchEnabled;
     }
 
     /**

@@ -11,12 +11,12 @@
                 <flux:button
                     :variant="$action->getProps()['variant'] ?? 'outline'"
                     :size="$action->getProps()['size'] ?? 'sm'"
-                    @if($action->getIcon()) icon="{{ strtolower($action->getIcon()) }}" @endif
+                    :icon="$action->getIcon() ? strtolower($action->getIcon()) : null"
                 >
                     {{ $action->getLabel() }}
                 </flux:button>
 
-                <flux:menu>
+                <flux:menu keep-open>
                     @foreach($action->getActions() as $subAction)
                         <flux:menu.item wire:click="executeBulkAction('{{ $subAction->getName() }}')">
                             <div class="flex items-center gap-2">
@@ -34,8 +34,8 @@
                 :variant="$action->getProps()['variant'] ?? 'outline'"
                 :size="$action->getProps()['size'] ?? 'sm'"
                 wire:click="executeBulkAction('{{ $action->getName() }}')"
-                @if($action->getIcon() && $action->getIconPosition() === 'left') icon="{{ strtolower($action->getIcon()) }}" @endif
-                @if($action->getIcon() && $action->getIconPosition() === 'right') icon-trailing="{{ strtolower($action->getIcon()) }}" @endif
+                :icon="$action->getIcon() && $action->getIconPosition() === 'left' ? strtolower($action->getIcon()) : null"
+                :icon-trailing="$action->getIcon() && $action->getIconPosition() === 'right' ? strtolower($action->getIcon()) : null"
             >
                 {{ $action->getLabel() }}
             </flux:button>

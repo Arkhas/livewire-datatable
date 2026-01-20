@@ -4,25 +4,27 @@
     <div class="flex flex-1 items-center gap-2">
         {{-- Search --}}
         @if($table->isSearchable())
-            <div class="w-full sm:w-64">
+            <div class="w-[150px] lg:w-[250px]">
                 <flux:input
-                    type="search"
-                    wire:model.live.debounce.{{ config('livewire-datatable.search_debounce', 300) }}ms="search"
+                    type="text"
+                    wire:model.live.debounce.300ms="search"
                     placeholder="{{ $table->getSearchPlaceholder() }}"
-                    icon="search"
+                    size="sm"
                 />
             </div>
         @endif
 
         {{-- Filters --}}
-        <x-livewire-datatable::partials.filters :table="$table" :filters="$filters" />
+        @if(count($table->getFilters()) > 0)
+            <x-livewire-datatable::partials.filters :table="$table" :filters="$filters" />
+        @endif
 
         {{-- Reset Filters --}}
         @if(!empty($filters))
             <flux:button variant="ghost" size="sm" wire:click="resetFilters">
                 Reset
             </flux:button>
-            <flux:button variant="ghost" size="sm" icon="x" wire:click="resetFilters" />
+            <flux:button variant="ghost" size="sm" icon="x-mark" wire:click="resetFilters" class="!px-1" />
         @endif
     </div>
 
@@ -35,11 +37,11 @@
         {{-- Export --}}
         @if($table->isExportable())
             <flux:dropdown>
-                <flux:button variant="ghost" size="sm" icon="download">
+                <flux:button  size="sm" icon="arrow-down-tray">
                     Export
                 </flux:button>
 
-                <flux:menu>
+                <flux:menu keep-open>
                     @foreach($table->getExportFormats() as $format)
                         <flux:menu.item wire:click="export('{{ $format }}')">
                             {{ strtoupper($format) }}
@@ -52,11 +54,11 @@
         {{-- View Options (Column Toggle) --}}
         @if(count($table->getToggableColumns()) > 0)
             <flux:dropdown>
-                <flux:button variant="ghost" size="sm" icon-trailing="settings-2">
+                <flux:button  size="sm" icon-trailing="adjustments-horizontal">
                     View
                 </flux:button>
 
-                <flux:menu>
+                <flux:menu keep-open>
                     @foreach($table->getToggableColumns() as $column)
                         <flux:menu.item wire:click="toggleColumn('{{ $column->getName() }}')">
                             <div class="flex items-center gap-2">

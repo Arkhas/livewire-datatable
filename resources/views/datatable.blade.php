@@ -23,7 +23,7 @@
                                 :sorted="$sortColumn === $column->getName()"
                                 :direction="$sortColumn === $column->getName() ? $sortDirection : null"
                                 wire:click="{{ $column->isSortable() ? 'sortBy(\'' . $column->getName() . '\')' : '' }}"
-                                @if($column->getWidth()) style="width: {{ $column->getWidth() }}" @endif
+                                :style="$column->getWidth() ? 'width: ' . $column->getWidth() : null"
                             >
                                 {{ $column->getLabel() }}
                             </flux:table.column>

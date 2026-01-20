@@ -245,7 +245,7 @@ Filter::make('status')
 TableAction::make('delete')
     ->label('Delete Selected')
     ->icon('Trash2', position: 'right')
-    ->props(['variant' => 'destructive', 'size' => 'sm'])
+    ->props(['variant' => 'danger', 'size' => 'sm'])
     ->confirm(fn($ids) => [...])
     ->handle(fn($ids) => [...])
 ```

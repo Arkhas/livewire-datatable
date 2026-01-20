@@ -21,7 +21,10 @@
                         @endif
 
                         @if($actionData['url'])
-                            <flux:menu.item :href="$actionData['url']">
+                            <flux:menu.item
+                                :href="$actionData['url']"
+                                :variant="$actionData['props']['variant'] ?? null"
+                            >
                                 <div class="flex items-center gap-2">
                                     @if($actionData['icon'])
                                         <flux:icon name="{{ strtolower($actionData['icon']) }}" class="size-4" />
@@ -30,7 +33,10 @@
                                 </div>
                             </flux:menu.item>
                         @else
-                            <flux:menu.item wire:click="executeRowAction('{{ $subAction->getName() }}', {{ $row->id }})">
+                            <flux:menu.item
+                                wire:click="executeRowAction('{{ $subAction->getName() }}', {{ $row->id }})"
+                                :variant="$actionData['props']['variant'] ?? null"
+                            >
                                 <div class="flex items-center gap-2">
                                     @if($actionData['icon'])
                                         <flux:icon name="{{ strtolower($actionData['icon']) }}" class="size-4" />

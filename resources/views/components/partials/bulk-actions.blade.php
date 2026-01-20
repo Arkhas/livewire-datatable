@@ -6,9 +6,7 @@
     </span>
 
     <flux:dropdown>
-        <flux:button size="sm" icon-trailing="chevron-down">
-            Actions
-        </flux:button>
+        <flux:button size="sm" icon="ellipsis-vertical" variant="ghost" />
 
         <flux:menu>
             @foreach($table->getActions() as $action)
@@ -19,7 +17,10 @@
                         {{ $action->getLabel() }}
                     </div>
                     @foreach($action->getActions() as $subAction)
-                        <flux:menu.item @click="executeBulkAction('{{ $subAction->getName() }}')">
+                        <flux:menu.item
+                            @click="executeBulkAction('{{ $subAction->getName() }}')"
+                            :variant="$subAction->getProps()['variant'] ?? null"
+                        >
                             <div class="flex items-center gap-2">
                                 @if($subAction->getIcon())
                                     <flux:icon name="{{ strtolower($subAction->getIcon()) }}" class="size-4" />
@@ -29,7 +30,10 @@
                         </flux:menu.item>
                     @endforeach
                 @else
-                    <flux:menu.item @click="executeBulkAction('{{ $action->getName() }}')">
+                    <flux:menu.item
+                        @click="executeBulkAction('{{ $action->getName() }}')"
+                        :variant="$action->getProps()['variant'] ?? null"
+                    >
                         <div class="flex items-center gap-2">
                             @if($action->getIcon())
                                 <flux:icon name="{{ strtolower($action->getIcon()) }}" class="size-4" />

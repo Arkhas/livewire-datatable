@@ -73,7 +73,7 @@ class {{ class }} extends Component
                 TableAction::make('delete')
                     ->label('Delete Selected')
                     ->icon('Trash2')
-                    ->props(['variant' => 'destructive', 'size' => 'sm'])
+                    ->props(['variant' => 'danger'])
                     ->confirm(fn($ids) => [
                         'title' => 'Delete ' . count($ids) . ' record(s)',
                         'message' => 'Are you sure you want to delete the selected records?',

@@ -1,6 +1,6 @@
 @props(['row', 'column'])
 
-<flux:table.cell class="w-12">
+<flux:table.cell class="w-12 py-1!">
     @php
         $action = $column->getAction();
     @endphp

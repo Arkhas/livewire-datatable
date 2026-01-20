@@ -9,23 +9,40 @@
                 @foreach($table->getColumns() as $column)
                     @if($this->isColumnVisible($column->getName()) && !$column->isHidden())
                         @if($column->toArray()['type'] === 'checkbox')
-                            <flux:table.column class="w-12">
-                                <flux:checkbox
-                                    wire:model.live="selectAll"
-                                    wire:click="toggleSelectAll"
-                                />
+                            <flux:table.column class="!w-16 !px-0">
+                                <div class="flex items-center justify-center w-full">
+                                    <flux:checkbox
+                                        wire:model.live="selectAll"
+                                        wire:click="toggleSelectAll"
+                                    />
+                                </div>
                             </flux:table.column>
                         @elseif($column->toArray()['type'] === 'action')
                             <flux:table.column class="w-12"></flux:table.column>
                         @else
                             <flux:table.column
-                                :sortable="$column->isSortable()"
-                                :sorted="$sortColumn === $column->getName()"
-                                :direction="$sortColumn === $column->getName() ? $sortDirection : null"
-                                wire:click="{{ $column->isSortable() ? 'sortBy(\'' . $column->getName() . '\')' : '' }}"
                                 :style="$column->getWidth() ? 'width: ' . $column->getWidth() : null"
                             >
-                                {{ $column->getLabel() }}
+                                @if($column->isSortable())
+                                    <button
+                                        type="button"
+                                        wire:click="sortBy('{{ $column->getName() }}')"
+                                        class="flex items-center gap-1 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                                    >
+                                        {{ $column->getLabel() }}
+                                        @if($sortColumn === $column->getName())
+                                            @if($sortDirection === 'asc')
+                                                <flux:icon.arrow-up class="size-4" />
+                                            @else
+                                                <flux:icon.arrow-down class="size-4" />
+                                            @endif
+                                        @else
+                                            <flux:icon.chevrons-up-down class="size-4 text-zinc-400" />
+                                        @endif
+                                    </button>
+                                @else
+                                    {{ $column->getLabel() }}
+                                @endif
                             </flux:table.column>
                         @endif
                     @endif

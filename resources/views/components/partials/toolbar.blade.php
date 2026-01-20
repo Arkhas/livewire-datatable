@@ -21,10 +21,9 @@
 
         {{-- Reset Filters --}}
         @if(!empty($filters))
-            <flux:button variant="ghost" size="sm" wire:click="resetFilters">
+            <flux:button variant="ghost" size="sm" icon-trailing="x-mark" wire:click="resetFilters">
                 Reset
             </flux:button>
-            <flux:button variant="ghost" size="sm" icon="x-mark" wire:click="resetFilters" class="!px-1" />
         @endif
     </div>
 

@@ -1,4 +1,4 @@
-@props(['table', 'filters', 'selected', 'data'])
+@props(['table', 'filters', 'data'])
 
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div class="flex flex-1 items-center gap-2">
@@ -29,8 +29,8 @@
 
     <div class="flex items-center gap-2">
         {{-- Bulk Actions --}}
-        @if(!empty($selected))
-            <x-livewire-datatable::partials.bulk-actions :table="$table" :selected="$selected" :data="$data" />
+        @if(count($table->getActions()) > 0)
+            <x-livewire-datatable::partials.bulk-actions :table="$table" :data="$data" />
         @endif
 
         {{-- Export --}}

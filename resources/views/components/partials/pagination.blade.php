@@ -1,12 +1,13 @@
-@props(['table', 'data', 'selected'])
+@props(['table', 'data'])
 
 <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
     <div class="text-sm text-zinc-600 dark:text-zinc-400">
-        @if(count($selected) > 0)
-            {{ count($selected) }} of {{ $data->total() }} row(s) selected.
-        @else
+        <span x-show="selected.length > 0" x-cloak>
+            <span x-text="selected.length"></span> of {{ $data->total() }} row(s) selected.
+        </span>
+        <span x-show="selected.length === 0">
             Showing {{ $data->firstItem() ?? 0 }} to {{ $data->lastItem() ?? 0 }} of {{ $data->total() }} results.
-        @endif
+        </span>
     </div>
 
     <div class="flex items-center gap-4">

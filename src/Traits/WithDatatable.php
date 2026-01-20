@@ -14,8 +14,6 @@ trait WithDatatable
     public ?string $sortColumn = null;
     public string $sortDirection = 'asc';
     public int $perPage = 10;
-    public array $selected = [];
-    public bool $selectAll = false;
     public array $hiddenColumns = [];
 
     // Confirmation modal state
@@ -150,42 +148,6 @@ trait WithDatatable
     }
 
     /**
-     * Toggle row selection.
-     */
-    public function toggleSelect(mixed $id): void
-    {
-        if (in_array($id, $this->selected)) {
-            $this->selected = array_values(array_diff($this->selected, [$id]));
-            $this->selectAll = false;
-        } else {
-            $this->selected[] = $id;
-        }
-    }
-
-    /**
-     * Toggle select all on current page.
-     */
-    public function toggleSelectAll(): void
-    {
-        if ($this->selectAll) {
-            $this->selected = [];
-            $this->selectAll = false;
-        } else {
-            $this->selected = $this->getData()->pluck('id')->toArray();
-            $this->selectAll = true;
-        }
-    }
-
-    /**
-     * Clear selection.
-     */
-    public function clearSelection(): void
-    {
-        $this->selected = [];
-        $this->selectAll = false;
-    }
-
-    /**
      * Toggle column visibility.
      */
     public function toggleColumn(string $column): void
@@ -206,11 +168,11 @@ trait WithDatatable
     }
 
     /**
-     * Execute a bulk action.
+     * Execute a bulk action with IDs provided from Alpine.js (client-side selection).
      */
-    public function executeBulkAction(string $actionName): void
+    public function executeBulkActionWithIds(string $actionName, array $ids): void
     {
-        if (empty($this->selected)) {
+        if (empty($ids)) {
             return;
         }
 
@@ -224,24 +186,26 @@ trait WithDatatable
         if ($action->requiresConfirmation()) {
             $this->pendingAction = $actionName;
             $this->pendingActionType = 'bulk';
-            $this->pendingActionTarget = $this->selected;
-            $this->confirmData = $action->getConfirmation($this->selected);
+            $this->pendingActionTarget = $ids;
+            $this->confirmData = $action->getConfirmation($ids);
             $this->showConfirmModal = true;
             return;
         }
 
-        $this->performBulkAction($actionName);
+        $this->performBulkAction($actionName, $ids);
     }
 
     /**
      * Actually perform the bulk action.
      */
-    protected function performBulkAction(string $actionName): void
+    protected function performBulkAction(string $actionName, array $ids): void
     {
-        $result = $this->getTable()->executeAction($actionName, $this->selected);
+        $result = $this->getTable()->executeAction($actionName, $ids);
 
         $this->handleActionResult($result);
-        $this->clearSelection();
+
+        // Dispatch event to clear Alpine selection
+        $this->dispatch('action-executed');
     }
 
     /**
@@ -329,7 +293,7 @@ trait WithDatatable
         }
 
         if ($this->pendingActionType === 'bulk') {
-            $this->performBulkAction($this->pendingAction);
+            $this->performBulkAction($this->pendingAction, $this->pendingActionTarget);
         } else {
             $this->performRowAction($this->pendingAction, $this->pendingActionTarget);
         }

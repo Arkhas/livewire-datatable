@@ -1,24 +1,25 @@
-@props(['table', 'selected', 'data'])
+@props(['table', 'data'])
 
-<div class="flex items-center gap-2">
+<div class="flex items-center gap-2" x-show="selected.length > 0" x-cloak>
     <span class="text-sm text-zinc-600 dark:text-zinc-400">
-        {{ count($selected) }} of {{ $data->total() }} row(s) selected.
+        <span x-text="selected.length"></span> of {{ $data->total() }} row(s) selected.
     </span>
 
-    @foreach($table->getActions() as $action)
-        @if($action->toArray()['type'] === 'group')
-            <flux:dropdown>
-                <flux:button
-                    :variant="$action->getProps()['variant'] ?? 'outline'"
-                    :size="$action->getProps()['size'] ?? 'sm'"
-                    :icon="$action->getIcon() ? strtolower($action->getIcon()) : null"
-                >
-                    {{ $action->getLabel() }}
-                </flux:button>
+    <flux:dropdown>
+        <flux:button size="sm" icon-trailing="chevron-down">
+            Actions
+        </flux:button>
 
-                <flux:menu keep-open>
+        <flux:menu>
+            @foreach($table->getActions() as $action)
+                @if($action->toArray()['type'] === 'group')
+                    {{-- Group separator --}}
+                    <flux:menu.separator />
+                    <div class="px-3 py-1 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                        {{ $action->getLabel() }}
+                    </div>
                     @foreach($action->getActions() as $subAction)
-                        <flux:menu.item wire:click="executeBulkAction('{{ $subAction->getName() }}')">
+                        <flux:menu.item @click="executeBulkAction('{{ $subAction->getName() }}')">
                             <div class="flex items-center gap-2">
                                 @if($subAction->getIcon())
                                     <flux:icon name="{{ strtolower($subAction->getIcon()) }}" class="size-4" />
@@ -27,18 +28,17 @@
                             </div>
                         </flux:menu.item>
                     @endforeach
-                </flux:menu>
-            </flux:dropdown>
-        @else
-            <flux:button
-                :variant="$action->getProps()['variant'] ?? 'outline'"
-                :size="$action->getProps()['size'] ?? 'sm'"
-                wire:click="executeBulkAction('{{ $action->getName() }}')"
-                :icon="$action->getIcon() && $action->getIconPosition() === 'left' ? strtolower($action->getIcon()) : null"
-                :icon-trailing="$action->getIcon() && $action->getIconPosition() === 'right' ? strtolower($action->getIcon()) : null"
-            >
-                {{ $action->getLabel() }}
-            </flux:button>
-        @endif
-    @endforeach
+                @else
+                    <flux:menu.item @click="executeBulkAction('{{ $action->getName() }}')">
+                        <div class="flex items-center gap-2">
+                            @if($action->getIcon())
+                                <flux:icon name="{{ strtolower($action->getIcon()) }}" class="size-4" />
+                            @endif
+                            {{ $action->getLabel() }}
+                        </div>
+                    </flux:menu.item>
+                @endif
+            @endforeach
+        </flux:menu>
+    </flux:dropdown>
 </div>

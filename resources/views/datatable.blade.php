@@ -1,6 +1,44 @@
-<div class="livewire-datatable">
+<div
+    x-data="{
+        selected: [],
+        pageIds: @js($data->pluck('id')->toArray()),
+        get selectAll() {
+            return this.pageIds.length > 0 && this.pageIds.every(id => this.selected.includes(id))
+        },
+        toggleSelection(id) {
+            const index = this.selected.indexOf(id)
+            if (index > -1) {
+                this.selected.splice(index, 1)
+            } else {
+                this.selected.push(id)
+            }
+        },
+        toggleSelectAll() {
+            if (this.selectAll) {
+                this.selected = this.selected.filter(id => !this.pageIds.includes(id))
+            } else {
+                this.pageIds.forEach(id => {
+                    if (!this.selected.includes(id)) {
+                        this.selected.push(id)
+                    }
+                })
+            }
+        },
+        isSelected(id) {
+            return this.selected.includes(id)
+        },
+        executeBulkAction(name) {
+            $wire.executeBulkActionWithIds(name, this.selected)
+        },
+        clearSelection() {
+            this.selected = []
+        }
+    }"
+    x-on:action-executed.window="clearSelection()"
+    class="livewire-datatable"
+>
     {{-- Toolbar: Search, Filters, Actions --}}
-    <x-livewire-datatable::partials.toolbar :table="$table" :filters="$filters" :selected="$selected" :data="$data" />
+    <x-livewire-datatable::partials.toolbar :table="$table" :filters="$filters" :data="$data" />
 
     {{-- Table --}}
     <div class="mt-4 border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden">
@@ -12,8 +50,8 @@
                             <flux:table.column class="!w-16 !px-0">
                                 <div class="flex items-center justify-center w-full">
                                     <flux:checkbox
-                                        wire:model.live="selectAll"
-                                        wire:click="toggleSelectAll"
+                                        x-bind:checked="selectAll"
+                                        @change="toggleSelectAll()"
                                     />
                                 </div>
                             </flux:table.column>
@@ -55,7 +93,7 @@
                         @foreach($table->getColumns() as $column)
                             @if($this->isColumnVisible($column->getName()) && !$column->isHidden())
                                 @if($column->toArray()['type'] === 'checkbox')
-                                    <x-livewire-datatable::columns.checkbox :row="$row" :selected="$selected" />
+                                    <x-livewire-datatable::columns.checkbox :row="$row" />
                                 @elseif($column->toArray()['type'] === 'action')
                                     <x-livewire-datatable::columns.action :row="$row" :column="$column" />
                                 @else
@@ -78,7 +116,7 @@
     </div>
 
     {{-- Pagination --}}
-    <x-livewire-datatable::partials.pagination :table="$table" :data="$data" :selected="$selected" />
+    <x-livewire-datatable::partials.pagination :table="$table" :data="$data" />
 
     {{-- Confirmation Modal --}}
     <x-livewire-datatable::modals.confirm :confirmData="$confirmData" />

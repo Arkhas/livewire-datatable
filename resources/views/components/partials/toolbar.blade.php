@@ -58,9 +58,25 @@
                     View
                 </flux:button>
 
-                <flux:menu keep-open>
+                <flux:menu keep-open x-data="{ columnSearch: '' }">
+                    {{-- Column Search --}}
+                    <div class="px-2 pb-2">
+                        <input
+                            type="text"
+                            x-model="columnSearch"
+                            placeholder="Search columns..."
+                            class="w-full px-2 py-1 text-sm border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            @click.stop
+                            x-on:keydown.capture.stop
+                        />
+                    </div>
+
                     @foreach($table->getToggableColumns() as $column)
-                        <flux:menu.item wire:click="toggleColumn('{{ $column->getName() }}')">
+                        <flux:menu.item
+                            wire:click="toggleColumn('{{ $column->getName() }}')"
+                            x-show="columnSearch === '' || '{{ strtolower($column->getLabel()) }}'.includes(columnSearch.toLowerCase())"
+                            x-cloak
+                        >
                             <div class="flex items-center gap-2">
                                 @if($this->isColumnVisible($column->getName()))
                                     <flux:icon name="check" class="size-4" />

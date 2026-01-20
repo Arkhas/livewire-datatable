@@ -26,18 +26,11 @@ trait WithDatatable
     protected EloquentTable $eloquentTable;
 
     /**
-     * Initialize the datatable.
-     */
-    public function bootWithDatatable(): void
-    {
-        $this->perPage = config('livewire-datatable.per_page', 10);
-    }
-
-    /**
      * Mount hook for the trait.
      */
     public function mountWithDatatable(): void
     {
+        $this->perPage = config('livewire-datatable.per_page', 10);
         $this->setup();
     }
 

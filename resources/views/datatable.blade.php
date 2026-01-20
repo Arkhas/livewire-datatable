@@ -1,7 +1,9 @@
 <div
     x-data="{
         selected: [],
-        pageIds: @js($data->pluck('id')->toArray()),
+        get pageIds() {
+            return JSON.parse(this.$root.dataset.pageIds || '[]')
+        },
         get selectAll() {
             return this.pageIds.length > 0 && this.pageIds.every(id => this.selected.includes(id))
         },
@@ -14,10 +16,11 @@
             }
         },
         toggleSelectAll() {
+            const currentPageIds = this.pageIds
             if (this.selectAll) {
-                this.selected = this.selected.filter(id => !this.pageIds.includes(id))
+                this.selected = this.selected.filter(id => !currentPageIds.includes(id))
             } else {
-                this.pageIds.forEach(id => {
+                currentPageIds.forEach(id => {
                     if (!this.selected.includes(id)) {
                         this.selected.push(id)
                     }
@@ -36,6 +39,7 @@
     }"
     x-on:action-executed.window="clearSelection()"
     class="livewire-datatable"
+    data-page-ids="{{ json_encode($data->pluck('id')->toArray()) }}"
 >
     {{-- Toolbar: Search, Filters, Actions --}}
     <x-livewire-datatable::partials.toolbar :table="$table" :filters="$filters" :data="$data" />
@@ -47,11 +51,13 @@
                 @foreach($table->getColumns() as $column)
                     @if($this->isColumnVisible($column->getName()) && !$column->isHidden())
                         @if($column->toArray()['type'] === 'checkbox')
-                            <flux:table.column class="!w-16 !px-0">
+                            <flux:table.column class="!w-10 !px-0">
                                 <div class="flex items-center justify-center w-full">
-                                    <flux:checkbox
-                                        x-bind:checked="selectAll"
+                                    <input
+                                        type="checkbox"
+                                        :checked="selectAll"
                                         @change="toggleSelectAll()"
+                                        class="size-[1.125rem] appearance-none border border-zinc-300 dark:border-white/10 rounded-md bg-white dark:bg-white/10 checked:border-transparent checked:bg-zinc-800 dark:checked:bg-white checked:bg-[url('data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22white%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M12.207%204.793a1%201%200%20010%201.414l-5%205a1%201%200%2001-1.414%200l-2-2a1%201%200%20011.414-1.414L6.5%209.086l4.293-4.293a1%201%200%20011.414%200z%22%2F%3E%3C%2Fsvg%3E')] dark:checked:bg-[url('data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22black%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M12.207%204.793a1%201%200%20010%201.414l-5%205a1%201%200%2001-1.414%200l-2-2a1%201%200%20011.414-1.414L6.5%209.086l4.293-4.293a1%201%200%20011.414%200z%22%2F%3E%3C%2Fsvg%3E')] cursor-pointer"
                                     />
                                 </div>
                             </flux:table.column>

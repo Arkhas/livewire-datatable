@@ -1,214 +1,173 @@
 <?php
 
-namespace Arkhas\LivewireDatatable\Tests\Unit\Actions;
-
 use Arkhas\LivewireDatatable\Actions\TableAction;
 use Arkhas\LivewireDatatable\Actions\TableActionGroup;
-use Arkhas\LivewireDatatable\Tests\TestCase;
 
-class TableActionGroupTest extends TestCase
-{
-    /** @test */
-    public function it_can_be_created_with_make(): void
-    {
-        $group = TableActionGroup::make('bulk_actions');
+test('it can be created with make', function () {
+    $group = TableActionGroup::make('bulk_actions');
 
-        $this->assertInstanceOf(TableActionGroup::class, $group);
-        $this->assertEquals('bulk_actions', $group->getName());
-    }
+    expect($group)
+        ->toBeInstanceOf(TableActionGroup::class)
+        ->and($group->getName())->toBe('bulk_actions');
+});
 
-    /** @test */
-    public function it_can_be_created_with_constructor(): void
-    {
-        $group = new TableActionGroup('actions');
+test('it can be created with constructor', function () {
+    $group = new TableActionGroup('actions');
 
-        $this->assertEquals('actions', $group->getName());
-    }
+    expect($group->getName())->toBe('actions');
+});
 
-    /** @test */
-    public function it_generates_label_from_name_if_not_set(): void
-    {
-        $group = TableActionGroup::make('bulk_actions');
+test('it generates label from name if not set', function () {
+    $group = TableActionGroup::make('bulk_actions');
 
-        $this->assertEquals('Bulk actions', $group->getLabel());
-    }
+    expect($group->getLabel())->toBe('Bulk actions');
+});
 
-    /** @test */
-    public function it_can_set_label(): void
-    {
-        $group = TableActionGroup::make('actions')
-            ->label('More Actions');
+test('it can set label', function () {
+    $group = TableActionGroup::make('actions')
+        ->label('More Actions');
 
-        $this->assertEquals('More Actions', $group->getLabel());
-    }
+    expect($group->getLabel())->toBe('More Actions');
+});
 
-    /** @test */
-    public function it_can_set_icon(): void
-    {
-        $group = TableActionGroup::make('actions')
-            ->icon('chevron-down');
+test('it can set icon', function () {
+    $group = TableActionGroup::make('actions')
+        ->icon('chevron-down');
 
-        $this->assertEquals('chevron-down', $group->getIcon());
-    }
+    expect($group->getIcon())->toBe('chevron-down');
+});
 
-    /** @test */
-    public function it_returns_null_icon_by_default(): void
-    {
-        $group = TableActionGroup::make('actions');
+test('it returns null icon by default', function () {
+    $group = TableActionGroup::make('actions');
 
-        $this->assertNull($group->getIcon());
-    }
+    expect($group->getIcon())->toBeNull();
+});
 
-    /** @test */
-    public function it_can_set_props(): void
-    {
-        $group = TableActionGroup::make('actions')
-            ->props(['variant' => 'outline', 'size' => 'sm']);
+test('it can set props', function () {
+    $group = TableActionGroup::make('actions')
+        ->props(['variant' => 'outline', 'size' => 'sm']);
 
-        $this->assertEquals(['variant' => 'outline', 'size' => 'sm'], $group->getProps());
-    }
+    expect($group->getProps())->toBe(['variant' => 'outline', 'size' => 'sm']);
+});
 
-    /** @test */
-    public function it_returns_empty_props_by_default(): void
-    {
-        $group = TableActionGroup::make('actions');
+test('it returns empty props by default', function () {
+    $group = TableActionGroup::make('actions');
 
-        $this->assertEquals([], $group->getProps());
-    }
+    expect($group->getProps())->toBe([]);
+});
 
-    /** @test */
-    public function it_can_set_styles(): void
-    {
-        $group = TableActionGroup::make('actions')
-            ->styles('min-width: 150px;');
+test('it can set styles', function () {
+    $group = TableActionGroup::make('actions')
+        ->styles('min-width: 150px;');
 
-        $this->assertEquals('min-width: 150px;', $group->getStyles());
-    }
+    expect($group->getStyles())->toBe('min-width: 150px;');
+});
 
-    /** @test */
-    public function it_returns_null_styles_by_default(): void
-    {
-        $group = TableActionGroup::make('actions');
+test('it returns null styles by default', function () {
+    $group = TableActionGroup::make('actions');
 
-        $this->assertNull($group->getStyles());
-    }
+    expect($group->getStyles())->toBeNull();
+});
 
-    /** @test */
-    public function it_can_set_actions(): void
-    {
-        $actions = [
+test('it can set actions', function () {
+    $actions = [
+        TableAction::make('delete'),
+        TableAction::make('archive'),
+    ];
+
+    $group = TableActionGroup::make('bulk')
+        ->actions($actions);
+
+    expect($group->getActions())->toHaveCount(2)
+        ->and($group->getActions())->toBe($actions);
+});
+
+test('it returns empty actions by default', function () {
+    $group = TableActionGroup::make('actions');
+
+    expect($group->getActions())->toBe([]);
+});
+
+test('it can get action by name', function () {
+    $deleteAction = TableAction::make('delete');
+    $archiveAction = TableAction::make('archive');
+
+    $group = TableActionGroup::make('bulk')
+        ->actions([$deleteAction, $archiveAction]);
+
+    expect($group->getAction('delete'))->toBe($deleteAction)
+        ->and($group->getAction('archive'))->toBe($archiveAction);
+});
+
+test('it returns null for missing action', function () {
+    $group = TableActionGroup::make('bulk')
+        ->actions([
             TableAction::make('delete'),
-            TableAction::make('archive'),
-        ];
+        ]);
 
-        $group = TableActionGroup::make('bulk')
-            ->actions($actions);
+    expect($group->getAction('archive'))->toBeNull();
+});
 
-        $this->assertCount(2, $group->getActions());
-        $this->assertSame($actions, $group->getActions());
-    }
+test('it returns error when executing directly', function () {
+    $group = TableActionGroup::make('bulk')
+        ->actions([
+            TableAction::make('delete')
+                ->handle(fn($ids) => ['success' => true]),
+        ]);
 
-    /** @test */
-    public function it_returns_empty_actions_by_default(): void
-    {
-        $group = TableActionGroup::make('actions');
+    $result = $group->execute([1, 2, 3]);
 
-        $this->assertEquals([], $group->getActions());
-    }
+    expect($result['success'])->toBeFalse()
+        ->and($result['message'])->toBe('Cannot execute action group directly');
+});
 
-    /** @test */
-    public function it_can_get_action_by_name(): void
-    {
-        $deleteAction = TableAction::make('delete');
-        $archiveAction = TableAction::make('archive');
+test('it does not require confirmation', function () {
+    $group = TableActionGroup::make('bulk');
 
-        $group = TableActionGroup::make('bulk')
-            ->actions([$deleteAction, $archiveAction]);
+    expect($group->requiresConfirmation())->toBeFalse();
+});
 
-        $this->assertSame($deleteAction, $group->getAction('delete'));
-        $this->assertSame($archiveAction, $group->getAction('archive'));
-    }
+test('it can convert to array', function () {
+    $group = TableActionGroup::make('bulk_actions')
+        ->label('Bulk Actions')
+        ->icon('more-horizontal')
+        ->props(['variant' => 'outline'])
+        ->styles('margin-right: 4px;')
+        ->actions([
+            TableAction::make('delete')
+                ->label('Delete Selected'),
+            TableAction::make('archive')
+                ->label('Archive Selected'),
+        ]);
 
-    /** @test */
-    public function it_returns_null_for_missing_action(): void
-    {
-        $group = TableActionGroup::make('bulk')
-            ->actions([
-                TableAction::make('delete'),
-            ]);
+    $array = $group->toArray();
 
-        $this->assertNull($group->getAction('archive'));
-    }
+    expect($array['name'])->toBe('bulk_actions')
+        ->and($array['label'])->toBe('Bulk Actions')
+        ->and($array['icon'])->toBe('more-horizontal')
+        ->and($array['props'])->toBe(['variant' => 'outline'])
+        ->and($array['styles'])->toBe('margin-right: 4px;')
+        ->and($array['type'])->toBe('group')
+        ->and($array['actions'])->toHaveCount(2)
+        ->and($array['actions'][0]['name'])->toBe('delete')
+        ->and($array['actions'][1]['name'])->toBe('archive');
+});
 
-    /** @test */
-    public function it_returns_error_when_executing_directly(): void
-    {
-        $group = TableActionGroup::make('bulk')
-            ->actions([
-                TableAction::make('delete')
-                    ->handle(fn($ids) => ['success' => true]),
-            ]);
+test('it supports fluent api', function () {
+    $group = TableActionGroup::make('actions')
+        ->label('Actions')
+        ->icon('menu')
+        ->props(['size' => 'sm'])
+        ->styles('gap: 4px;')
+        ->actions([
+            TableAction::make('edit'),
+            TableAction::make('delete'),
+        ]);
 
-        $result = $group->execute([1, 2, 3]);
-
-        $this->assertFalse($result['success']);
-        $this->assertEquals('Cannot execute action group directly', $result['message']);
-    }
-
-    /** @test */
-    public function it_does_not_require_confirmation(): void
-    {
-        $group = TableActionGroup::make('bulk');
-
-        $this->assertFalse($group->requiresConfirmation());
-    }
-
-    /** @test */
-    public function it_can_convert_to_array(): void
-    {
-        $group = TableActionGroup::make('bulk_actions')
-            ->label('Bulk Actions')
-            ->icon('more-horizontal')
-            ->props(['variant' => 'outline'])
-            ->styles('margin-right: 4px;')
-            ->actions([
-                TableAction::make('delete')
-                    ->label('Delete Selected'),
-                TableAction::make('archive')
-                    ->label('Archive Selected'),
-            ]);
-
-        $array = $group->toArray();
-
-        $this->assertEquals('bulk_actions', $array['name']);
-        $this->assertEquals('Bulk Actions', $array['label']);
-        $this->assertEquals('more-horizontal', $array['icon']);
-        $this->assertEquals(['variant' => 'outline'], $array['props']);
-        $this->assertEquals('margin-right: 4px;', $array['styles']);
-        $this->assertEquals('group', $array['type']);
-        $this->assertCount(2, $array['actions']);
-        $this->assertEquals('delete', $array['actions'][0]['name']);
-        $this->assertEquals('archive', $array['actions'][1]['name']);
-    }
-
-    /** @test */
-    public function it_supports_fluent_api(): void
-    {
-        $group = TableActionGroup::make('actions')
-            ->label('Actions')
-            ->icon('menu')
-            ->props(['size' => 'sm'])
-            ->styles('gap: 4px;')
-            ->actions([
-                TableAction::make('edit'),
-                TableAction::make('delete'),
-            ]);
-
-        $this->assertInstanceOf(TableActionGroup::class, $group);
-        $this->assertEquals('Actions', $group->getLabel());
-        $this->assertEquals('menu', $group->getIcon());
-        $this->assertEquals(['size' => 'sm'], $group->getProps());
-        $this->assertEquals('gap: 4px;', $group->getStyles());
-        $this->assertCount(2, $group->getActions());
-    }
-}
+    expect($group)->toBeInstanceOf(TableActionGroup::class)
+        ->and($group->getLabel())->toBe('Actions')
+        ->and($group->getIcon())->toBe('menu')
+        ->and($group->getProps())->toBe(['size' => 'sm'])
+        ->and($group->getStyles())->toBe('gap: 4px;')
+        ->and($group->getActions())->toHaveCount(2);
+});

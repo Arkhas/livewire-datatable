@@ -1,233 +1,186 @@
 <?php
 
-namespace Arkhas\LivewireDatatable\Tests\Unit\Actions;
-
 use Arkhas\LivewireDatatable\Actions\TableAction;
-use Arkhas\LivewireDatatable\Tests\TestCase;
 
-class TableActionTest extends TestCase
-{
-    /** @test */
-    public function it_can_be_created_with_make(): void
-    {
-        $action = TableAction::make('delete');
+test('it can be created with make', function () {
+    $action = TableAction::make('delete');
 
-        $this->assertInstanceOf(TableAction::class, $action);
-        $this->assertEquals('delete', $action->getName());
-    }
+    expect($action)
+        ->toBeInstanceOf(TableAction::class)
+        ->and($action->getName())->toBe('delete');
+});
 
-    /** @test */
-    public function it_can_be_created_with_constructor(): void
-    {
-        $action = new TableAction('export');
+test('it can be created with constructor', function () {
+    $action = new TableAction('export');
 
-        $this->assertEquals('export', $action->getName());
-    }
+    expect($action->getName())->toBe('export');
+});
 
-    /** @test */
-    public function it_generates_label_from_name_if_not_set(): void
-    {
-        $action = TableAction::make('delete_all');
+test('it generates label from name if not set', function () {
+    $action = TableAction::make('delete_all');
 
-        $this->assertEquals('Delete all', $action->getLabel());
-    }
+    expect($action->getLabel())->toBe('Delete all');
+});
 
-    /** @test */
-    public function it_can_set_label(): void
-    {
-        $action = TableAction::make('delete')
-            ->label('Delete Selected');
+test('it can set label', function () {
+    $action = TableAction::make('delete')
+        ->label('Delete Selected');
 
-        $this->assertEquals('Delete Selected', $action->getLabel());
-    }
+    expect($action->getLabel())->toBe('Delete Selected');
+});
 
-    /** @test */
-    public function it_can_set_icon_with_default_position(): void
-    {
-        $action = TableAction::make('delete')
-            ->icon('trash');
+test('it can set icon with default position', function () {
+    $action = TableAction::make('delete')
+        ->icon('trash');
 
-        $this->assertEquals('trash', $action->getIcon());
-        $this->assertEquals('left', $action->getIconPosition());
-    }
+    expect($action->getIcon())->toBe('trash')
+        ->and($action->getIconPosition())->toBe('left');
+});
 
-    /** @test */
-    public function it_can_set_icon_with_custom_position(): void
-    {
-        $action = TableAction::make('export')
-            ->icon('download', 'right');
+test('it can set icon with custom position', function () {
+    $action = TableAction::make('export')
+        ->icon('download', 'right');
 
-        $this->assertEquals('download', $action->getIcon());
-        $this->assertEquals('right', $action->getIconPosition());
-    }
+    expect($action->getIcon())->toBe('download')
+        ->and($action->getIconPosition())->toBe('right');
+});
 
-    /** @test */
-    public function it_returns_null_icon_by_default(): void
-    {
-        $action = TableAction::make('delete');
+test('it returns null icon by default', function () {
+    $action = TableAction::make('delete');
 
-        $this->assertNull($action->getIcon());
-    }
+    expect($action->getIcon())->toBeNull();
+});
 
-    /** @test */
-    public function it_returns_left_icon_position_by_default(): void
-    {
-        $action = TableAction::make('delete');
+test('it returns left icon position by default', function () {
+    $action = TableAction::make('delete');
 
-        $this->assertEquals('left', $action->getIconPosition());
-    }
+    expect($action->getIconPosition())->toBe('left');
+});
 
-    /** @test */
-    public function it_can_set_props(): void
-    {
-        $action = TableAction::make('delete')
-            ->props(['variant' => 'danger', 'size' => 'sm']);
+test('it can set props', function () {
+    $action = TableAction::make('delete')
+        ->props(['variant' => 'danger', 'size' => 'sm']);
 
-        $this->assertEquals(['variant' => 'danger', 'size' => 'sm'], $action->getProps());
-    }
+    expect($action->getProps())->toBe(['variant' => 'danger', 'size' => 'sm']);
+});
 
-    /** @test */
-    public function it_returns_empty_props_by_default(): void
-    {
-        $action = TableAction::make('delete');
+test('it returns empty props by default', function () {
+    $action = TableAction::make('delete');
 
-        $this->assertEquals([], $action->getProps());
-    }
+    expect($action->getProps())->toBe([]);
+});
 
-    /** @test */
-    public function it_can_set_styles(): void
-    {
-        $action = TableAction::make('delete')
-            ->styles('color: red; font-weight: bold;');
+test('it can set styles', function () {
+    $action = TableAction::make('delete')
+        ->styles('color: red; font-weight: bold;');
 
-        $this->assertEquals('color: red; font-weight: bold;', $action->getStyles());
-    }
+    expect($action->getStyles())->toBe('color: red; font-weight: bold;');
+});
 
-    /** @test */
-    public function it_returns_null_styles_by_default(): void
-    {
-        $action = TableAction::make('delete');
+test('it returns null styles by default', function () {
+    $action = TableAction::make('delete');
 
-        $this->assertNull($action->getStyles());
-    }
+    expect($action->getStyles())->toBeNull();
+});
 
-    /** @test */
-    public function it_can_set_handler(): void
-    {
-        $action = TableAction::make('delete')
-            ->handle(fn($ids) => ['success' => true, 'deleted' => count($ids)]);
+test('it can set handler', function () {
+    $action = TableAction::make('delete')
+        ->handle(fn($ids) => ['success' => true, 'deleted' => count($ids)]);
 
-        $this->assertInstanceOf(TableAction::class, $action);
-    }
+    expect($action)->toBeInstanceOf(TableAction::class);
+});
 
-    /** @test */
-    public function it_can_execute_action_with_handler(): void
-    {
-        $action = TableAction::make('delete')
-            ->handle(fn($ids) => [
-                'success' => true,
-                'message' => 'Deleted ' . count($ids) . ' items',
-            ]);
+test('it can execute action with handler', function () {
+    $action = TableAction::make('delete')
+        ->handle(fn($ids) => [
+            'success' => true,
+            'message' => 'Deleted ' . count($ids) . ' items',
+        ]);
 
-        $result = $action->execute([1, 2, 3]);
+    $result = $action->execute([1, 2, 3]);
 
-        $this->assertTrue($result['success']);
-        $this->assertEquals('Deleted 3 items', $result['message']);
-    }
+    expect($result['success'])->toBeTrue()
+        ->and($result['message'])->toBe('Deleted 3 items');
+});
 
-    /** @test */
-    public function it_returns_error_when_executing_without_handler(): void
-    {
-        $action = TableAction::make('delete');
+test('it returns error when executing without handler', function () {
+    $action = TableAction::make('delete');
 
-        $result = $action->execute([1, 2, 3]);
+    $result = $action->execute([1, 2, 3]);
 
-        $this->assertFalse($result['success']);
-        $this->assertEquals('No handler defined', $result['message']);
-    }
+    expect($result['success'])->toBeFalse()
+        ->and($result['message'])->toBe('No handler defined');
+});
 
-    /** @test */
-    public function it_can_set_confirmation(): void
-    {
-        $action = TableAction::make('delete')
-            ->confirm(fn($ids) => [
-                'title' => 'Delete Items?',
-                'message' => 'Are you sure you want to delete ' . count($ids) . ' items?',
-            ]);
+test('it can set confirmation', function () {
+    $action = TableAction::make('delete')
+        ->confirm(fn($ids) => [
+            'title' => 'Delete Items?',
+            'message' => 'Are you sure you want to delete ' . count($ids) . ' items?',
+        ]);
 
-        $this->assertTrue($action->requiresConfirmation());
-    }
+    expect($action->requiresConfirmation())->toBeTrue();
+});
 
-    /** @test */
-    public function it_does_not_require_confirmation_by_default(): void
-    {
-        $action = TableAction::make('delete');
+test('it does not require confirmation by default', function () {
+    $action = TableAction::make('delete');
 
-        $this->assertFalse($action->requiresConfirmation());
-    }
+    expect($action->requiresConfirmation())->toBeFalse();
+});
 
-    /** @test */
-    public function it_can_get_confirmation_data(): void
-    {
-        $action = TableAction::make('delete')
-            ->confirm(fn($ids) => [
-                'title' => 'Confirm Delete',
-                'message' => 'Delete ' . count($ids) . ' selected items?',
-            ]);
+test('it can get confirmation data', function () {
+    $action = TableAction::make('delete')
+        ->confirm(fn($ids) => [
+            'title' => 'Confirm Delete',
+            'message' => 'Delete ' . count($ids) . ' selected items?',
+        ]);
 
-        $confirmation = $action->getConfirmation([1, 2, 3, 4, 5]);
+    $confirmation = $action->getConfirmation([1, 2, 3, 4, 5]);
 
-        $this->assertEquals('Confirm Delete', $confirmation['title']);
-        $this->assertEquals('Delete 5 selected items?', $confirmation['message']);
-    }
+    expect($confirmation['title'])->toBe('Confirm Delete')
+        ->and($confirmation['message'])->toBe('Delete 5 selected items?');
+});
 
-    /** @test */
-    public function it_returns_null_confirmation_when_not_set(): void
-    {
-        $action = TableAction::make('delete');
+test('it returns null confirmation when not set', function () {
+    $action = TableAction::make('delete');
 
-        $this->assertNull($action->getConfirmation([1, 2, 3]));
-    }
+    expect($action->getConfirmation([1, 2, 3]))->toBeNull();
+});
 
-    /** @test */
-    public function it_can_convert_to_array(): void
-    {
-        $action = TableAction::make('delete')
-            ->label('Delete Selected')
-            ->icon('trash', 'left')
-            ->props(['variant' => 'danger'])
-            ->styles('font-weight: bold;')
-            ->confirm(fn($ids) => ['title' => 'Confirm']);
+test('it can convert to array', function () {
+    $action = TableAction::make('delete')
+        ->label('Delete Selected')
+        ->icon('trash', 'left')
+        ->props(['variant' => 'danger'])
+        ->styles('font-weight: bold;')
+        ->confirm(fn($ids) => ['title' => 'Confirm']);
 
-        $array = $action->toArray();
+    $array = $action->toArray();
 
-        $this->assertEquals('delete', $array['name']);
-        $this->assertEquals('Delete Selected', $array['label']);
-        $this->assertEquals('trash', $array['icon']);
-        $this->assertEquals('left', $array['iconPosition']);
-        $this->assertEquals(['variant' => 'danger'], $array['props']);
-        $this->assertEquals('font-weight: bold;', $array['styles']);
-        $this->assertTrue($array['requiresConfirmation']);
-        $this->assertEquals('action', $array['type']);
-    }
+    expect($array['name'])->toBe('delete')
+        ->and($array['label'])->toBe('Delete Selected')
+        ->and($array['icon'])->toBe('trash')
+        ->and($array['iconPosition'])->toBe('left')
+        ->and($array['props'])->toBe(['variant' => 'danger'])
+        ->and($array['styles'])->toBe('font-weight: bold;')
+        ->and($array['requiresConfirmation'])->toBeTrue()
+        ->and($array['type'])->toBe('action');
+});
 
-    /** @test */
-    public function it_supports_fluent_api(): void
-    {
-        $action = TableAction::make('bulk_delete')
-            ->label('Delete All')
-            ->icon('trash-2', 'right')
-            ->props(['variant' => 'destructive'])
-            ->styles('margin-left: 8px;')
-            ->handle(fn($ids) => ['success' => true])
-            ->confirm(fn($ids) => ['title' => 'Confirm']);
+test('it supports fluent api', function () {
+    $action = TableAction::make('bulk_delete')
+        ->label('Delete All')
+        ->icon('trash-2', 'right')
+        ->props(['variant' => 'destructive'])
+        ->styles('margin-left: 8px;')
+        ->handle(fn($ids) => ['success' => true])
+        ->confirm(fn($ids) => ['title' => 'Confirm']);
 
-        $this->assertInstanceOf(TableAction::class, $action);
-        $this->assertEquals('Delete All', $action->getLabel());
-        $this->assertEquals('trash-2', $action->getIcon());
-        $this->assertEquals('right', $action->getIconPosition());
-        $this->assertEquals(['variant' => 'destructive'], $action->getProps());
-        $this->assertEquals('margin-left: 8px;', $action->getStyles());
-        $this->assertTrue($action->requiresConfirmation());
-    }
-}
+    expect($action)->toBeInstanceOf(TableAction::class)
+        ->and($action->getLabel())->toBe('Delete All')
+        ->and($action->getIcon())->toBe('trash-2')
+        ->and($action->getIconPosition())->toBe('right')
+        ->and($action->getProps())->toBe(['variant' => 'destructive'])
+        ->and($action->getStyles())->toBe('margin-left: 8px;')
+        ->and($action->requiresConfirmation())->toBeTrue();
+});

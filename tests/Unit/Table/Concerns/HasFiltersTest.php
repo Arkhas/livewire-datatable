@@ -1,94 +1,76 @@
 <?php
 
-namespace Arkhas\LivewireDatatable\Tests\Unit\Table\Concerns;
-
 use Arkhas\LivewireDatatable\Table\EloquentTable;
 use Arkhas\LivewireDatatable\Filters\Filter;
-use Arkhas\LivewireDatatable\Tests\TestCase;
 use Arkhas\LivewireDatatable\Tests\Fixtures\TestModel;
 
-class HasFiltersTest extends TestCase
+function createHasFiltersTestTable(): EloquentTable
 {
-    protected function createTable(): EloquentTable
-    {
-        return new EloquentTable(TestModel::query());
-    }
+    return new EloquentTable(TestModel::query());
+}
 
-    /** @test */
-    public function it_can_set_filters(): void
-    {
-        $filters = [
+test('it can set filters', function () {
+    $filters = [
+        Filter::make('status'),
+        Filter::make('category'),
+    ];
+
+    $table = createHasFiltersTestTable()
+        ->filters($filters);
+
+    expect($table->getFilters())->toBe($filters);
+});
+
+test('it returns empty filters by default', function () {
+    $table = createHasFiltersTestTable();
+
+    expect($table->getFilters())->toBe([]);
+});
+
+test('it can get filter by name', function () {
+    $statusFilter = Filter::make('status');
+    $categoryFilter = Filter::make('category');
+
+    $table = createHasFiltersTestTable()
+        ->filters([$statusFilter, $categoryFilter]);
+
+    expect($table->getFilter('status'))->toBe($statusFilter)
+        ->and($table->getFilter('category'))->toBe($categoryFilter);
+});
+
+test('it returns null for missing filter', function () {
+    $table = createHasFiltersTestTable()
+        ->filters([Filter::make('status')]);
+
+    expect($table->getFilter('category'))->toBeNull();
+});
+
+test('it can count active filters', function () {
+    $table = createHasFiltersTestTable()
+        ->filters([
             Filter::make('status'),
             Filter::make('category'),
-        ];
-
-        $table = $this->createTable()
-            ->filters($filters);
-
-        $this->assertSame($filters, $table->getFilters());
-    }
-
-    /** @test */
-    public function it_returns_empty_filters_by_default(): void
-    {
-        $table = $this->createTable();
-
-        $this->assertEquals([], $table->getFilters());
-    }
-
-    /** @test */
-    public function it_can_get_filter_by_name(): void
-    {
-        $statusFilter = Filter::make('status');
-        $categoryFilter = Filter::make('category');
-
-        $table = $this->createTable()
-            ->filters([$statusFilter, $categoryFilter]);
-
-        $this->assertSame($statusFilter, $table->getFilter('status'));
-        $this->assertSame($categoryFilter, $table->getFilter('category'));
-    }
-
-    /** @test */
-    public function it_returns_null_for_missing_filter(): void
-    {
-        $table = $this->createTable()
-            ->filters([Filter::make('status')]);
-
-        $this->assertNull($table->getFilter('category'));
-    }
-
-    /** @test */
-    public function it_can_count_active_filters(): void
-    {
-        $table = $this->createTable()
-            ->filters([
-                Filter::make('status'),
-                Filter::make('category'),
-            ]);
-
-        $this->assertEquals(0, $table->getActiveFiltersCount([]));
-        $this->assertEquals(1, $table->getActiveFiltersCount(['status' => ['active']]));
-        $this->assertEquals(2, $table->getActiveFiltersCount([
-            'status' => ['active'],
-            'category' => ['tech', 'sport'],
-        ]));
-    }
-
-    /** @test */
-    public function it_ignores_empty_filter_values_in_count(): void
-    {
-        $table = $this->createTable()
-            ->filters([
-                Filter::make('status'),
-                Filter::make('category'),
-            ]);
-
-        $count = $table->getActiveFiltersCount([
-            'status' => ['active'],
-            'category' => [],
         ]);
 
-        $this->assertEquals(1, $count);
-    }
-}
+    expect($table->getActiveFiltersCount([]))->toBe(0)
+        ->and($table->getActiveFiltersCount(['status' => ['active']]))->toBe(1)
+        ->and($table->getActiveFiltersCount([
+            'status' => ['active'],
+            'category' => ['tech', 'sport'],
+        ]))->toBe(2);
+});
+
+test('it ignores empty filter values in count', function () {
+    $table = createHasFiltersTestTable()
+        ->filters([
+            Filter::make('status'),
+            Filter::make('category'),
+        ]);
+
+    $count = $table->getActiveFiltersCount([
+        'status' => ['active'],
+        'category' => [],
+    ]);
+
+    expect($count)->toBe(1);
+});

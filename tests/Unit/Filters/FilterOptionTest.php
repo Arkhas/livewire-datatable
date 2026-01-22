@@ -1,183 +1,137 @@
 <?php
 
-namespace Arkhas\LivewireDatatable\Tests\Unit\Filters;
-
 use Arkhas\LivewireDatatable\Filters\FilterOption;
-use Arkhas\LivewireDatatable\Tests\TestCase;
 use Arkhas\LivewireDatatable\Tests\Fixtures\TestModel;
 
-class FilterOptionTest extends TestCase
-{
-    protected function defineDatabaseMigrations(): void
-    {
-        parent::defineDatabaseMigrations();
-    }
+test('it can be created with make', function () {
+    $option = FilterOption::make('active');
 
-    /** @test */
-    public function it_can_be_created_with_make(): void
-    {
-        $option = FilterOption::make('active');
+    expect($option)
+        ->toBeInstanceOf(FilterOption::class)
+        ->and($option->getName())->toBe('active');
+});
 
-        $this->assertInstanceOf(FilterOption::class, $option);
-        $this->assertEquals('active', $option->getName());
-    }
+test('it can be created with constructor', function () {
+    $option = new FilterOption('inactive');
 
-    /** @test */
-    public function it_can_be_created_with_constructor(): void
-    {
-        $option = new FilterOption('inactive');
+    expect($option->getName())->toBe('inactive');
+});
 
-        $this->assertEquals('inactive', $option->getName());
-    }
+test('it generates label from name if not set', function () {
+    $option = FilterOption::make('is_active');
 
-    /** @test */
-    public function it_generates_label_from_name_if_not_set(): void
-    {
-        $option = FilterOption::make('is_active');
+    expect($option->getLabel())->toBe('Is active');
+});
 
-        $this->assertEquals('Is active', $option->getLabel());
-    }
+test('it can set label', function () {
+    $option = FilterOption::make('active')
+        ->label('Active Users');
 
-    /** @test */
-    public function it_can_set_label(): void
-    {
-        $option = FilterOption::make('active')
-            ->label('Active Users');
+    expect($option->getLabel())->toBe('Active Users');
+});
 
-        $this->assertEquals('Active Users', $option->getLabel());
-    }
+test('it can set icon', function () {
+    $option = FilterOption::make('active')
+        ->icon('check-circle');
 
-    /** @test */
-    public function it_can_set_icon(): void
-    {
-        $option = FilterOption::make('active')
-            ->icon('check-circle');
+    expect($option->getIcon())->toBe('check-circle');
+});
 
-        $this->assertEquals('check-circle', $option->getIcon());
-    }
+test('it returns null icon by default', function () {
+    $option = FilterOption::make('active');
 
-    /** @test */
-    public function it_returns_null_icon_by_default(): void
-    {
-        $option = FilterOption::make('active');
+    expect($option->getIcon())->toBeNull();
+});
 
-        $this->assertNull($option->getIcon());
-    }
+test('it can set count callback', function () {
+    $option = FilterOption::make('active')
+        ->count(fn() => 42);
 
-    /** @test */
-    public function it_can_set_count_callback(): void
-    {
-        $option = FilterOption::make('active')
-            ->count(fn() => 42);
+    expect($option->getCount())->toBe(42);
+});
 
-        $this->assertEquals(42, $option->getCount());
-    }
+test('it returns null count by default', function () {
+    $option = FilterOption::make('active');
 
-    /** @test */
-    public function it_returns_null_count_by_default(): void
-    {
-        $option = FilterOption::make('active');
+    expect($option->getCount())->toBeNull();
+});
 
-        $this->assertNull($option->getCount());
-    }
+test('it can use dynamic count', function () {
+    TestModel::create(['name' => 'User 1', 'email' => 'user1@example.com', 'status' => 'active']);
+    TestModel::create(['name' => 'User 2', 'email' => 'user2@example.com', 'status' => 'active']);
+    TestModel::create(['name' => 'User 3', 'email' => 'user3@example.com', 'status' => 'inactive']);
 
-    /** @test */
-    public function it_can_use_dynamic_count(): void
-    {
-        $this->defineDatabaseMigrations();
-        
-        TestModel::create(['name' => 'User 1', 'email' => 'user1@example.com', 'status' => 'active']);
-        TestModel::create(['name' => 'User 2', 'email' => 'user2@example.com', 'status' => 'active']);
-        TestModel::create(['name' => 'User 3', 'email' => 'user3@example.com', 'status' => 'inactive']);
+    $option = FilterOption::make('active')
+        ->count(fn() => TestModel::where('status', 'active')->count());
 
-        $option = FilterOption::make('active')
-            ->count(fn() => TestModel::where('status', 'active')->count());
+    expect($option->getCount())->toBe(2);
+});
 
-        $this->assertEquals(2, $option->getCount());
-    }
+test('it can set query callback', function () {
+    $option = FilterOption::make('active')
+        ->query(fn($query) => $query->where('status', 'active'));
 
-    /** @test */
-    public function it_can_set_query_callback(): void
-    {
-        $option = FilterOption::make('active')
-            ->query(fn($query) => $query->where('status', 'active'));
+    expect($option)->toBeInstanceOf(FilterOption::class);
+});
 
-        $this->assertInstanceOf(FilterOption::class, $option);
-    }
+test('it can apply query to builder', function () {
+    TestModel::create(['name' => 'Active User', 'email' => 'active@example.com', 'status' => 'active']);
+    TestModel::create(['name' => 'Inactive User', 'email' => 'inactive@example.com', 'status' => 'inactive']);
 
-    /** @test */
-    public function it_can_apply_query_to_builder(): void
-    {
-        $this->defineDatabaseMigrations();
-        
-        TestModel::create(['name' => 'Active User', 'email' => 'active@example.com', 'status' => 'active']);
-        TestModel::create(['name' => 'Inactive User', 'email' => 'inactive@example.com', 'status' => 'inactive']);
+    $option = FilterOption::make('active')
+        ->query(fn($q) => $q->where('status', 'active'));
 
-        $option = FilterOption::make('active')
-            ->query(fn($q) => $q->where('status', 'active'));
+    $query = TestModel::query();
+    $option->applyToQuery($query, 'active');
 
-        $query = TestModel::query();
-        $option->applyToQuery($query, 'active');
+    // The option uses orWhere wrapping, so we need to test it properly
+    expect($query->toSql())->toContain('status');
+});
 
-        // The option uses orWhere wrapping, so we need to test it properly
-        $this->assertStringContainsString('status', $query->toSql());
-    }
+test('it does nothing when no query callback', function () {
+    TestModel::create(['name' => 'User 1', 'email' => 'user1@example.com']);
+    TestModel::create(['name' => 'User 2', 'email' => 'user2@example.com']);
 
-    /** @test */
-    public function it_does_nothing_when_no_query_callback(): void
-    {
-        $this->defineDatabaseMigrations();
-        
-        TestModel::create(['name' => 'User 1', 'email' => 'user1@example.com']);
-        TestModel::create(['name' => 'User 2', 'email' => 'user2@example.com']);
+    $option = FilterOption::make('active');
 
-        $option = FilterOption::make('active');
+    $query = TestModel::query();
+    $option->applyToQuery($query, 'active');
 
-        $query = TestModel::query();
-        $option->applyToQuery($query, 'active');
+    expect($query->count())->toBe(2);
+});
 
-        $this->assertEquals(2, $query->count());
-    }
+test('it can convert to array', function () {
+    $option = FilterOption::make('active')
+        ->label('Active')
+        ->icon('check')
+        ->count(fn() => 10);
 
-    /** @test */
-    public function it_can_convert_to_array(): void
-    {
-        $option = FilterOption::make('active')
-            ->label('Active')
-            ->icon('check')
-            ->count(fn() => 10);
+    $array = $option->toArray();
 
-        $array = $option->toArray();
+    expect($array['name'])->toBe('active')
+        ->and($array['label'])->toBe('Active')
+        ->and($array['icon'])->toBe('check')
+        ->and($array['count'])->toBe(10);
+});
 
-        $this->assertEquals('active', $array['name']);
-        $this->assertEquals('Active', $array['label']);
-        $this->assertEquals('check', $array['icon']);
-        $this->assertEquals(10, $array['count']);
-    }
+test('it converts to array with null count', function () {
+    $option = FilterOption::make('active')
+        ->label('Active');
 
-    /** @test */
-    public function it_converts_to_array_with_null_count(): void
-    {
-        $option = FilterOption::make('active')
-            ->label('Active');
+    $array = $option->toArray();
 
-        $array = $option->toArray();
+    expect($array['count'])->toBeNull();
+});
 
-        $this->assertNull($array['count']);
-    }
+test('it supports fluent api', function () {
+    $option = FilterOption::make('pending')
+        ->label('Pending Review')
+        ->icon('clock')
+        ->count(fn() => 5)
+        ->query(fn($q) => $q->where('status', 'pending'));
 
-    /** @test */
-    public function it_supports_fluent_api(): void
-    {
-        $option = FilterOption::make('pending')
-            ->label('Pending Review')
-            ->icon('clock')
-            ->count(fn() => 5)
-            ->query(fn($q) => $q->where('status', 'pending'));
-
-        $this->assertInstanceOf(FilterOption::class, $option);
-        $this->assertEquals('Pending Review', $option->getLabel());
-        $this->assertEquals('clock', $option->getIcon());
-        $this->assertEquals(5, $option->getCount());
-    }
-}
+    expect($option)->toBeInstanceOf(FilterOption::class)
+        ->and($option->getLabel())->toBe('Pending Review')
+        ->and($option->getIcon())->toBe('clock')
+        ->and($option->getCount())->toBe(5);
+});

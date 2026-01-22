@@ -1,50 +1,28 @@
 <?php
 
-namespace Arkhas\LivewireDatatable\Tests\Unit;
+test('it registers config', function () {
+    expect(config('livewire-datatable'))->not->toBeNull()
+        ->and(config('livewire-datatable'))->toBeArray();
+});
 
-use Arkhas\LivewireDatatable\LivewireDatatableServiceProvider;
-use Arkhas\LivewireDatatable\Tests\TestCase;
+test('it has default per page config', function () {
+    expect(config('livewire-datatable.per_page'))->toBe(10);
+});
 
-class LivewireDatatableServiceProviderTest extends TestCase
-{
-    /** @test */
-    public function it_registers_config(): void
-    {
-        $this->assertNotNull(config('livewire-datatable'));
-        $this->assertIsArray(config('livewire-datatable'));
-    }
+test('it has default sort direction config', function () {
+    expect(config('livewire-datatable.default_sort_direction'))->toBe('asc');
+});
 
-    /** @test */
-    public function it_has_default_per_page_config(): void
-    {
-        $this->assertEquals(10, config('livewire-datatable.per_page'));
-    }
+test('it has export chunk size config', function () {
+    expect(config('livewire-datatable.export.chunk_size'))->toBe(1000);
+});
 
-    /** @test */
-    public function it_has_default_sort_direction_config(): void
-    {
-        $this->assertEquals('asc', config('livewire-datatable.default_sort_direction'));
-    }
+test('it loads views', function () {
+    expect(view()->exists('livewire-datatable::datatable'))->toBeTrue();
+});
 
-    /** @test */
-    public function it_has_export_chunk_size_config(): void
-    {
-        $this->assertEquals(1000, config('livewire-datatable.export.chunk_size'));
-    }
-
-    /** @test */
-    public function it_loads_views(): void
-    {
-        $this->assertTrue(
-            view()->exists('livewire-datatable::datatable')
-        );
-    }
-
-    /** @test */
-    public function it_registers_make_datatable_command(): void
-    {
-        $commands = \Artisan::all();
-        
-        $this->assertArrayHasKey('make:datatable', $commands);
-    }
-}
+test('it registers make datatable command', function () {
+    $commands = \Artisan::all();
+    
+    expect($commands)->toHaveKey('make:datatable');
+});

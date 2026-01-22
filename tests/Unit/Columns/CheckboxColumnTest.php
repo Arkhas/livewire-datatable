@@ -1,83 +1,61 @@
 <?php
 
-namespace Arkhas\LivewireDatatable\Tests\Unit\Columns;
-
 use Arkhas\LivewireDatatable\Columns\CheckboxColumn;
-use Arkhas\LivewireDatatable\Tests\TestCase;
 
-class CheckboxColumnTest extends TestCase
-{
-    /** @test */
-    public function it_can_be_created_with_make(): void
-    {
-        $column = CheckboxColumn::make();
+test('it can be created with make', function () {
+    $column = CheckboxColumn::make();
 
-        $this->assertInstanceOf(CheckboxColumn::class, $column);
-    }
+    expect($column)->toBeInstanceOf(CheckboxColumn::class);
+});
 
-    /** @test */
-    public function it_has_default_name(): void
-    {
-        $column = CheckboxColumn::make();
+test('it has default name', function () {
+    $column = CheckboxColumn::make();
 
-        $this->assertEquals('__checkbox', $column->getName());
-    }
+    expect($column->getName())->toBe('__checkbox');
+});
 
-    /** @test */
-    public function it_ignores_custom_name_in_make(): void
-    {
-        $column = CheckboxColumn::make('custom');
+test('it ignores custom name in make', function () {
+    $column = CheckboxColumn::make('custom');
 
-        // CheckboxColumn always uses __checkbox internally
-        $this->assertEquals('__checkbox', $column->getName());
-    }
+    // CheckboxColumn always uses __checkbox internally
+    expect($column->getName())->toBe('__checkbox');
+});
 
-    /** @test */
-    public function it_is_not_sortable_by_default(): void
-    {
-        $column = CheckboxColumn::make();
+test('it is not sortable by default', function () {
+    $column = CheckboxColumn::make();
 
-        $this->assertFalse($column->isSortable());
-    }
+    expect($column->isSortable())->toBeFalse();
+});
 
-    /** @test */
-    public function it_is_not_toggable_by_default(): void
-    {
-        $column = CheckboxColumn::make();
+test('it is not toggable by default', function () {
+    $column = CheckboxColumn::make();
 
-        $this->assertFalse($column->isToggable());
-    }
+    expect($column->isToggable())->toBeFalse();
+});
 
-    /** @test */
-    public function it_has_empty_label_by_default(): void
-    {
-        $column = CheckboxColumn::make();
+test('it has empty label by default', function () {
+    $column = CheckboxColumn::make();
 
-        $this->assertEquals('', $column->getLabel());
-    }
+    expect($column->getLabel())->toBe('');
+});
 
-    /** @test */
-    public function it_can_be_converted_to_array(): void
-    {
-        $column = CheckboxColumn::make();
+test('it can be converted to array', function () {
+    $column = CheckboxColumn::make();
 
-        $array = $column->toArray();
+    $array = $column->toArray();
 
-        $this->assertEquals('checkbox', $array['type']);
-        $this->assertEquals('__checkbox', $array['name']);
-        $this->assertEquals('', $array['label']);
-        $this->assertFalse($array['sortable']);
-        $this->assertFalse($array['toggable']);
-    }
+    expect($array['type'])->toBe('checkbox')
+        ->and($array['name'])->toBe('__checkbox')
+        ->and($array['label'])->toBe('')
+        ->and($array['sortable'])->toBeFalse()
+        ->and($array['toggable'])->toBeFalse();
+});
 
-    /** @test */
-    public function it_inherits_column_methods(): void
-    {
-        $column = CheckboxColumn::make()
-            ->width('40px')
-            ->hidden();
+test('it inherits column methods', function () {
+    $column = CheckboxColumn::make()
+        ->width('40px')
+        ->hidden();
 
-        $this->assertEquals('40px', $column->getWidth());
-        $this->assertTrue($column->isHidden());
-    }
-}
+    expect($column->getWidth())->toBe('40px')
+        ->and($column->isHidden())->toBeTrue();
+});

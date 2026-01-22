@@ -1,68 +1,49 @@
 <?php
 
-namespace Arkhas\LivewireDatatable\Tests\Unit\Commands;
-
-use Arkhas\LivewireDatatable\Tests\TestCase;
 use Illuminate\Support\Facades\File;
 
-class MakeDatatableCommandTest extends TestCase
-{
-    protected function tearDown(): void
-    {
-        // Clean up generated files
-        $path = app_path('Livewire');
-        if (File::isDirectory($path)) {
-            File::deleteDirectory($path);
-        }
-
-        parent::tearDown();
+afterEach(function () {
+    // Clean up generated files
+    $path = app_path('Livewire');
+    if (File::isDirectory($path)) {
+        File::deleteDirectory($path);
     }
+});
 
-    /** @test */
-    public function it_can_create_datatable_component(): void
-    {
-        $this->artisan('make:datatable', ['name' => 'UserTable'])
-            ->assertSuccessful();
+test('it can create datatable component', function () {
+    $this->artisan('make:datatable', ['name' => 'UserTable'])
+        ->assertSuccessful();
 
-        $this->assertFileExists(app_path('Livewire/UserTable.php'));
-    }
+    expect(app_path('Livewire/UserTable.php'))->toBeFile();
+});
 
-    /** @test */
-    public function it_uses_model_name_from_component_name(): void
-    {
-        $this->artisan('make:datatable', ['name' => 'ProductTable'])
-            ->assertSuccessful();
+test('it uses model name from component name', function () {
+    $this->artisan('make:datatable', ['name' => 'ProductTable'])
+        ->assertSuccessful();
 
-        $content = File::get(app_path('Livewire/ProductTable.php'));
+    $content = File::get(app_path('Livewire/ProductTable.php'));
 
-        $this->assertStringContainsString('Product::query()', $content);
-    }
+    expect($content)->toContain('Product::query()');
+});
 
-    /** @test */
-    public function it_creates_file_in_correct_namespace(): void
-    {
-        $this->artisan('make:datatable', ['name' => 'OrderTable'])
-            ->assertSuccessful();
+test('it creates file in correct namespace', function () {
+    $this->artisan('make:datatable', ['name' => 'OrderTable'])
+        ->assertSuccessful();
 
-        $content = File::get(app_path('Livewire/OrderTable.php'));
+    $content = File::get(app_path('Livewire/OrderTable.php'));
 
-        $this->assertStringContainsString('namespace App\Livewire;', $content);
-    }
+    expect($content)->toContain('namespace App\Livewire;');
+});
 
-    /** @test */
-    public function it_outputs_helpful_messages(): void
-    {
-        $this->artisan('make:datatable', ['name' => 'TestTable'])
-            ->expectsOutput('Datatable component created successfully.')
-            ->assertSuccessful();
-    }
+test('it outputs helpful messages', function () {
+    $this->artisan('make:datatable', ['name' => 'TestTable'])
+        ->expectsOutput('Datatable component created successfully.')
+        ->assertSuccessful();
+});
 
-    /** @test */
-    public function it_uses_datatable_stub(): void
-    {
-        // Verify the stub exists
-        $stubPath = __DIR__ . '/../../../stubs/datatable.stub';
-        
-        $this->assertFileExists($stubPath);
-    }
-}
+test('it uses datatable stub', function () {
+    // Verify the stub exists
+    $stubPath = __DIR__ . '/../../../stubs/datatable.stub';
+    
+    expect($stubPath)->toBeFile();
+});

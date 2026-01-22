@@ -1,70 +1,52 @@
 <?php
 
-namespace Arkhas\LivewireDatatable\Tests\Unit\Table\Concerns;
-
 use Arkhas\LivewireDatatable\Table\EloquentTable;
-use Arkhas\LivewireDatatable\Tests\TestCase;
 use Arkhas\LivewireDatatable\Tests\Fixtures\TestModel;
 
-class HasExportTest extends TestCase
+function createHasExportTestTable(): EloquentTable
 {
-    protected function createTable(): EloquentTable
-    {
-        return new EloquentTable(TestModel::query());
-    }
-
-    /** @test */
-    public function it_is_exportable_by_default(): void
-    {
-        $table = $this->createTable();
-
-        $this->assertTrue($table->isExportable());
-    }
-
-    /** @test */
-    public function it_can_disable_export(): void
-    {
-        $table = $this->createTable()
-            ->exportable(false);
-
-        $this->assertFalse($table->isExportable());
-    }
-
-    /** @test */
-    public function it_can_enable_export(): void
-    {
-        $table = $this->createTable()
-            ->exportable(false)
-            ->exportable(true);
-
-        $this->assertTrue($table->isExportable());
-    }
-
-    /** @test */
-    public function it_has_default_export_formats(): void
-    {
-        $table = $this->createTable();
-
-        $this->assertEquals(['csv', 'xlsx'], $table->getExportFormats());
-    }
-
-    /** @test */
-    public function it_can_set_export_formats(): void
-    {
-        $table = $this->createTable()
-            ->exportFormats(['csv', 'pdf']);
-
-        $this->assertEquals(['csv', 'pdf'], $table->getExportFormats());
-    }
-
-    /** @test */
-    public function it_supports_fluent_export_configuration(): void
-    {
-        $table = $this->createTable()
-            ->exportable()
-            ->exportFormats(['csv', 'xlsx', 'pdf']);
-
-        $this->assertTrue($table->isExportable());
-        $this->assertEquals(['csv', 'xlsx', 'pdf'], $table->getExportFormats());
-    }
+    return new EloquentTable(TestModel::query());
 }
+
+test('it is exportable by default', function () {
+    $table = createHasExportTestTable();
+
+    expect($table->isExportable())->toBeTrue();
+});
+
+test('it can disable export', function () {
+    $table = createHasExportTestTable()
+        ->exportable(false);
+
+    expect($table->isExportable())->toBeFalse();
+});
+
+test('it can enable export', function () {
+    $table = createHasExportTestTable()
+        ->exportable(false)
+        ->exportable(true);
+
+    expect($table->isExportable())->toBeTrue();
+});
+
+test('it has default export formats', function () {
+    $table = createHasExportTestTable();
+
+    expect($table->getExportFormats())->toBe(['csv', 'xlsx']);
+});
+
+test('it can set export formats', function () {
+    $table = createHasExportTestTable()
+        ->exportFormats(['csv', 'pdf']);
+
+    expect($table->getExportFormats())->toBe(['csv', 'pdf']);
+});
+
+test('it supports fluent export configuration', function () {
+    $table = createHasExportTestTable()
+        ->exportable()
+        ->exportFormats(['csv', 'xlsx', 'pdf']);
+
+    expect($table->isExportable())->toBeTrue()
+        ->and($table->getExportFormats())->toBe(['csv', 'xlsx', 'pdf']);
+});

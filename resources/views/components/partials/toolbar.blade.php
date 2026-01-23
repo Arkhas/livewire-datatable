@@ -60,14 +60,19 @@
                 <flux:menu keep-open x-data="{ columnSearch: '' }">
                     {{-- Column Search --}}
                     <div class="px-2 pb-2">
-                        <input
-                            type="text"
-                            x-model="columnSearch"
-                            placeholder="Search columns..."
-                            class="w-full px-2 py-1 text-sm border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            @click.stop
-                            x-on:keydown.capture.stop
-                        />
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+                                <flux:icon name="magnifying-glass" class="size-4 text-zinc-400 dark:text-zinc-500" />
+                            </div>
+                            <input
+                                type="text"
+                                x-model="columnSearch"
+                                placeholder="Search columns..."
+                                class="w-full pl-6 pr-2 py-1.5 text-sm border-0 rounded-md bg-transparent text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-0"
+                                @click.stop
+                                x-on:keydown.capture.stop
+                            />
+                        </div>
                     </div>
 
                     @foreach($table->getToggableColumns() as $column)

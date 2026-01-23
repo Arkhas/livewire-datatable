@@ -112,7 +112,7 @@
                     <flux:table.row>
                         <flux:table.cell :colspan="count($table->getVisibleColumns())">
                             <div class="text-center py-8 text-zinc-500 dark:text-zinc-400">
-                                No results found.
+                                {{ __('livewire-datatable::messages.no_results') }}
                             </div>
                         </flux:table.cell>
                     </flux:table.row>

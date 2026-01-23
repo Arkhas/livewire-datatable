@@ -2,7 +2,7 @@
 
 <div class="flex items-center gap-2" x-show="selected.length > 0" x-cloak>
     <span class="text-sm text-zinc-600 dark:text-zinc-400">
-        <span x-text="selected.length"></span> of {{ $data->total() }} row(s) selected.
+        <span x-text="selected.length"></span> {{ __('livewire-datatable::messages.rows_selected') }}
     </span>
 
     <flux:dropdown>

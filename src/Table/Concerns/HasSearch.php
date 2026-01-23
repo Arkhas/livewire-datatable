@@ -73,6 +73,6 @@ trait HasSearch
      */
     public function getSearchPlaceholder(): string
     {
-        return $this->searchPlaceholder ?? 'Search...';
+        return $this->searchPlaceholder ?? __('livewire-datatable::messages.search_placeholder');
     }
 }

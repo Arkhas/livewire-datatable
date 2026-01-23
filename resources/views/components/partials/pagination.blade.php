@@ -3,17 +3,17 @@
 <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
     <div class="text-sm text-zinc-600 dark:text-zinc-400">
         <span x-show="selected.length > 0" x-cloak>
-            <span x-text="selected.length"></span> of {{ $data->total() }} row(s) selected.
+            <span x-text="selected.length"></span> {{ __('livewire-datatable::messages.rows_selected_of', ['total' => $data->total()]) }}
         </span>
         <span x-show="selected.length === 0">
-            Showing {{ $data->firstItem() ?? 0 }} to {{ $data->lastItem() ?? 0 }} of {{ $data->total() }} results.
+            {{ __('livewire-datatable::messages.showing_results', ['first' => $data->firstItem() ?? 0, 'last' => $data->lastItem() ?? 0, 'total' => $data->total()]) }}
         </span>
     </div>
 
     <div class="flex items-center gap-4">
         {{-- Rows per page --}}
         <div class="flex items-center gap-2">
-            <span class="text-sm text-zinc-600 dark:text-zinc-400">Rows per page</span>
+            <span class="text-sm text-zinc-600 dark:text-zinc-400">{{ __('livewire-datatable::messages.rows_per_page') }}</span>
             <flux:select wire:model.live="perPage" size="sm" class="w-20">
                 @foreach($table->getPerPageOptions() as $option)
                     <flux:select.option value="{{ $option }}">{{ $option }}</flux:select.option>
@@ -23,7 +23,7 @@
 
         {{-- Page info --}}
         <span class="text-sm text-zinc-600 dark:text-zinc-400">
-            Page {{ $data->currentPage() }} of {{ $data->lastPage() }}
+            {{ __('livewire-datatable::messages.page_info', ['current' => $data->currentPage(), 'last' => $data->lastPage()]) }}
         </span>
 
         {{-- Navigation --}}

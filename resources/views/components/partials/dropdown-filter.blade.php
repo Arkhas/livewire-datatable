@@ -52,7 +52,7 @@
                 @endif
                 <span class="truncate">{{ $selectedOption ? $selectedOption->getLabel() : $selectedValue }}</span>
             @else
-                {{ $selectedCount }} selected
+                {{ $selectedCount }} {{ __('livewire-datatable::messages.selected') }}
             @endif
         </span>
     @endif

@@ -4,23 +4,23 @@
     @if(!empty($confirmData))
         <div class="space-y-4">
             <flux:heading size="lg">
-                {{ $confirmData['title'] ?? 'Confirm Action' }}
+                {{ $confirmData['title'] ?? __('livewire-datatable::messages.confirm_action') }}
             </flux:heading>
 
             <flux:text>
-                {{ $confirmData['message'] ?? 'Are you sure you want to perform this action?' }}
+                {{ $confirmData['message'] ?? __('livewire-datatable::messages.confirm_message') }}
             </flux:text>
 
             <div class="flex justify-end gap-3 pt-4">
                 <flux:button variant="ghost" wire:click="cancelConfirm">
-                    {{ $confirmData['cancel'] ?? 'Cancel' }}
+                    {{ $confirmData['cancel'] ?? __('livewire-datatable::messages.cancel') }}
                 </flux:button>
 
                 <flux:button
                     variant="{{ isset($confirmData['variant']) ? $confirmData['variant'] : 'primary' }}"
                     wire:click="confirmAction"
                 >
-                    {{ $confirmData['confirm'] ?? 'Confirm' }}
+                    {{ $confirmData['confirm'] ?? __('livewire-datatable::messages.confirm') }}
                 </flux:button>
             </div>
         </div>

@@ -315,7 +315,7 @@ trait WithDatatable
             if (isset($result['message'])) {
                 $this->dispatch('notify', [
                     'type' => 'success',
-                    'title' => $result['title'] ?? 'Success',
+                    'title' => $result['title'] ?? __('livewire-datatable::messages.success'),
                     'message' => $result['message'],
                 ]);
             }
@@ -323,7 +323,7 @@ trait WithDatatable
             if (isset($result['message'])) {
                 $this->dispatch('notify', [
                     'type' => 'error',
-                    'title' => $result['title'] ?? 'Error',
+                    'title' => $result['title'] ?? __('livewire-datatable::messages.error'),
                     'message' => $result['message'],
                 ]);
             }
@@ -346,26 +346,6 @@ trait WithDatatable
         $this->resetPage();
     }
 
-    /**
-     * Normalize filter values when they are updated via wire:model.
-     * This ensures date range filters are in the correct format.
-     */
-    public function updatedFilters($value, $key): void
-    {
-        // Get the filter configuration
-        $filter = $this->getTable()->getFilter($key);
-        
-        if (!$filter) {
-            return;
-        }
-
-        // Normalize range filter values
-        if ($filter instanceof \Arkhas\LivewireDatatable\Filters\RangeFilter) {
-            $this->normalizeRangeFilterValue($key, $value);
-        }
-
-        $this->resetPage();
-    }
 
     /**
      * Normalize range filter value to ensure it's in a format that RangeFilter can handle.

@@ -27,6 +27,9 @@ class LivewireDatatableServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Load translations
+        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'livewire-datatable');
+
         // Load views
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'livewire-datatable');
 
@@ -51,6 +54,11 @@ class LivewireDatatableServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../stubs' => base_path('stubs/livewire-datatable'),
             ], 'livewire-datatable-stubs');
+
+            // Publish translations
+            $this->publishes([
+                __DIR__ . '/../lang' => lang_path('vendor/livewire-datatable'),
+            ], 'livewire-datatable-lang');
 
             // Register commands
             $this->commands([

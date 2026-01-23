@@ -22,7 +22,7 @@
         {{-- Reset Filters --}}
         @if(!empty($filters))
             <flux:button variant="ghost" size="sm" icon-trailing="x-mark" wire:click="resetFilters">
-                Reset
+                {{ __('livewire-datatable::messages.reset') }}
             </flux:button>
         @endif
     </div>
@@ -37,7 +37,7 @@
         @if($table->isExportable())
             <flux:dropdown>
                 <flux:button  size="sm" icon="arrow-down-tray">
-                    Export
+                    {{ __('livewire-datatable::messages.export') }}
                 </flux:button>
 
                 <flux:menu keep-open>
@@ -54,7 +54,7 @@
         @if(count($table->getToggableColumns()) > 0)
             <flux:dropdown>
                 <flux:button  size="sm" icon-trailing="adjustments-horizontal">
-                    View
+                    {{ __('livewire-datatable::messages.view') }}
                 </flux:button>
 
                 <flux:menu keep-open x-data="{ columnSearch: '' }">
@@ -67,7 +67,7 @@
                             <input
                                 type="text"
                                 x-model="columnSearch"
-                                placeholder="Search columns..."
+                                placeholder="{{ __('livewire-datatable::messages.search_columns') }}"
                                 class="w-full pl-6 pr-2 py-1.5 text-sm border-0 rounded-md bg-transparent text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-0"
                                 @click.stop
                                 x-on:keydown.capture.stop

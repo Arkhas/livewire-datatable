@@ -50,6 +50,8 @@ use Arkhas\LivewireDatatable\Columns\CheckboxColumn;
 use Arkhas\LivewireDatatable\Columns\ActionColumn;
 use Arkhas\LivewireDatatable\Filters\Filter;
 use Arkhas\LivewireDatatable\Filters\FilterOption;
+use Arkhas\LivewireDatatable\Filters\DateFilter;
+use Arkhas\LivewireDatatable\Filters\RangeFilter;
 use Arkhas\LivewireDatatable\Actions\TableAction;
 use Arkhas\LivewireDatatable\Actions\ColumnAction;
 use Arkhas\LivewireDatatable\Actions\ColumnActionGroup;
@@ -161,6 +163,23 @@ class TasksTable extends Component
                         FilterOption::make('high')->label('High')->icon('arrow-up')
                             ->query(fn($query, $keyword) => $query->where('priority', $keyword)),
                     ]),
+
+                // Example: Date filter (single mode)
+                DateFilter::make('created_at')
+                    ->label('Created At')
+                    ->column('created_at')
+                    ->min('2024-01-01')
+                    ->withToday()
+                    ->clearable(),
+
+                // Example: Date range filter
+                // RangeFilter::make('date_range')
+                //     ->label('Date Range')
+                //     ->column('created_at')
+                //     ->withPresets()
+                //     ->presets('today yesterday thisWeek last7Days thisMonth yearToDate allTime')
+                //     ->minRange(3)
+                //     ->maxRange(30),
             ])
             ->actions([
                 TableAction::make('delete')
@@ -206,6 +225,12 @@ class TasksTable extends Component
 - **CheckboxColumn**: Row selection column
 - **ActionColumn**: Actions dropdown menu per row
 
+### Filters
+
+- **Filter**: Dropdown filter with multiple options and selection
+- **DateFilter**: Date picker filter for single date selection (using Flux date picker)
+- **RangeFilter**: Date picker filter for date range selection with presets support (using Flux date picker)
+
 ### Column Options
 
 ```php
@@ -224,6 +249,8 @@ Column::make('name')
 
 ### Filters
 
+#### Dropdown Filters
+
 ```php
 Filter::make('status')
     ->label('Status')
@@ -235,6 +262,92 @@ Filter::make('status')
             ->count(fn() => Model::where('status', 'active')->count())
             ->query(fn($q, $keyword) => $q->where('status', $keyword)),
     ])
+```
+
+#### Date Filters
+
+Date filters use the Flux date picker component. There are two types: `DateFilter` for single date selection and `RangeFilter` for date ranges.
+
+**Single Date Filter:**
+
+```php
+DateFilter::make('created_at')
+    ->label('Created At')
+    ->column('created_at')  // Database column to filter on
+    ->min('2024-01-01')
+    ->max('today')
+    ->withToday()
+    ->selectableHeader()
+    ->clearable()
+```
+
+**Date Range Filter:**
+
+```php
+RangeFilter::make('date_range')
+    ->label('Date Range')
+    ->column('created_at')
+    ->withPresets()  // Enable preset date ranges (Last 7 Days, This Month, etc.)
+    ->presets('today yesterday thisWeek last7Days thisMonth yearToDate allTime')
+    ->minRange(3)  // Minimum days in range
+    ->maxRange(30)  // Maximum days in range
+    ->min('2024-01-01')
+```
+
+**Common Options (available for both DateFilter and RangeFilter):**
+
+- `column(string)` - Database column to filter on (defaults to filter name)
+- `min(string)` - Minimum selectable date
+- `max(string)` - Maximum selectable date
+- `withToday(bool)` - Show "Today" shortcut button
+- `selectableHeader(bool)` - Make month/year selectable
+- `clearable(bool)` - Show clear button
+- `disabled(bool)` - Disable the date picker
+- `invalid(bool)` - Apply error styling
+- `locale(string)` - Set the locale (e.g., 'fr', 'en-US')
+- `placeholder(string)` - Placeholder text
+- `openTo(string)` - Date to open to if no date is selected
+- `forceOpenTo(bool)` - Force open to the open-to date
+- `months(int)` - Number of months to display
+- `startDay(int)` - Day of week to start on (0-6, Sunday-Saturday)
+- `weekNumbers(bool)` - Display week numbers
+- `withInputs(bool)` - Display date inputs at the top
+- `withConfirmation(bool)` - Require confirmation before applying
+- `unavailable(string)` - Comma-separated list of unavailable dates
+- `fixedWeeks(bool)` - Display consistent number of weeks
+
+**RangeFilter Specific Options:**
+
+- `withPresets(bool)` - Enable preset date ranges
+- `presets(string)` - Space-separated list of presets to show
+- `minRange(int)` - Minimum number of days in range
+- `maxRange(int)` - Maximum number of days in range
+
+**Query Handling:**
+
+The filters automatically handle query building:
+- **DateFilter**: Uses `whereDate()` for exact date matching
+- **RangeFilter**: Uses `whereBetween()` with start and end dates
+
+You can also provide a custom query callback:
+
+```php
+// For DateFilter
+DateFilter::make('created_at')
+    ->column('created_at')
+    ->query(function ($query, $date) {
+        // Custom query logic
+        $query->whereDate('created_at', $date->format('Y-m-d'));
+    })
+
+// For RangeFilter
+RangeFilter::make('date_range')
+    ->column('created_at')
+    ->query(function ($query, $dates) {
+        // Custom query logic
+        [$startDate, $endDate] = $dates;
+        $query->whereBetween('created_at', [$startDate, $endDate]);
+    })
 ```
 
 ### Actions

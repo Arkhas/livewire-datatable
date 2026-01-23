@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Arkhas\LivewireDatatable\Components\Datatable;
+use Arkhas\LivewireDatatable\Components\DatePickerFilter;
 use Arkhas\LivewireDatatable\Commands\MakeDatatableCommand;
 
 class LivewireDatatableServiceProvider extends ServiceProvider
@@ -31,6 +32,9 @@ class LivewireDatatableServiceProvider extends ServiceProvider
 
         // Register Blade components
         Blade::anonymousComponentPath(__DIR__ . '/../resources/views/components', 'livewire-datatable');
+        
+        // Register class-based components
+        Blade::component(DatePickerFilter::class, 'livewire-datatable::date-picker-filter');
 
         if ($this->app->runningInConsole()) {
             // Publish config

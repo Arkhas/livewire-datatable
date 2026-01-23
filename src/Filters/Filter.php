@@ -12,6 +12,7 @@ class Filter
     protected bool $multiple = false;
     protected array $options = [];
     protected ?Closure $queryCallback = null;
+    public string $type = 'dropdown';
 
     public function __construct(string $name)
     {
@@ -153,6 +154,7 @@ class Filter
         return [
             'name' => $this->name,
             'label' => $this->getLabel(),
+            'type' => $this->type,
             'multiple' => $this->multiple,
             'options' => collect($this->options)->map->toArray()->all(),
         ];

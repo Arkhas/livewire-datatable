@@ -347,6 +347,74 @@ trait WithDatatable
     }
 
     /**
+     * Normalize filter values when they are updated via wire:model.
+     * This ensures date range filters are in the correct format.
+     */
+    public function updatedFilters($value, $key): void
+    {
+        // Get the filter configuration
+        $filter = $this->getTable()->getFilter($key);
+        
+        if (!$filter) {
+            return;
+        }
+
+        // Normalize range filter values
+        if ($filter instanceof \Arkhas\LivewireDatatable\Filters\RangeFilter) {
+            $this->normalizeRangeFilterValue($key, $value);
+        }
+
+        $this->resetPage();
+    }
+
+    /**
+     * Normalize range filter value to ensure it's in a format that RangeFilter can handle.
+     */
+    protected function normalizeRangeFilterValue(string $filterName, mixed $value): void
+    {
+        if (empty($value)) {
+            unset($this->filters[$filterName]);
+            return;
+        }
+
+        // If value is already in the correct format, keep it
+        if (is_array($value)) {
+            // Check if it's already in the format we need
+            if (isset($value['start']) && isset($value['end'])) {
+                // Already in correct format
+                $this->filters[$filterName] = $value;
+                return;
+            }
+            
+            // Check if first element is an array with start/end
+            if (isset($value[0]) && is_array($value[0]) && isset($value[0]['start']) && isset($value[0]['end'])) {
+                // Convert to flat array format
+                $this->filters[$filterName] = $value[0];
+                return;
+            }
+            
+            // Check if first element is a string with '/'
+            if (isset($value[0]) && is_string($value[0]) && str_contains($value[0], '/')) {
+                // Already in string format, keep it
+                $this->filters[$filterName] = $value;
+                return;
+            }
+        }
+
+        // If value is an object (DateRange from Flux), convert it
+        if (is_object($value) && method_exists($value, 'start') && method_exists($value, 'end')) {
+            $this->filters[$filterName] = [
+                'start' => $value->start(),
+                'end' => $value->end(),
+            ];
+            return;
+        }
+
+        // Store as-is if we can't normalize it
+        $this->filters[$filterName] = $value;
+    }
+
+    /**
      * Get active filters count.
      */
     public function getActiveFiltersCount(): int

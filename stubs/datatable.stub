@@ -10,6 +10,8 @@ use Arkhas\LivewireDatatable\Columns\CheckboxColumn;
 use Arkhas\LivewireDatatable\Columns\ActionColumn;
 use Arkhas\LivewireDatatable\Filters\Filter;
 use Arkhas\LivewireDatatable\Filters\FilterOption;
+use Arkhas\LivewireDatatable\Filters\DateFilter;
+use Arkhas\LivewireDatatable\Filters\RangeFilter;
 use Arkhas\LivewireDatatable\Actions\TableAction;
 use Arkhas\LivewireDatatable\Actions\ColumnAction;
 use Arkhas\LivewireDatatable\Actions\ColumnActionGroup;
@@ -67,7 +69,30 @@ class {{ class }} extends Component
                     ),
             ])
             ->filters([
-                // Add your filters here
+                // Example: Date filter (single mode)
+                // DateFilter::make('created_at')
+                //     ->label('Created At')
+                //     ->column('created_at')
+                //     ->min('2024-01-01')
+                //     ->withToday()
+                //     ->clearable(),
+
+                // Example: Date range filter
+                // RangeFilter::make('date_range')
+                //     ->label('Date Range')
+                //     ->column('created_at')
+                //     ->withPresets()
+                //     ->presets('today yesterday thisWeek last7Days thisMonth yearToDate allTime')
+                //     ->minRange(3)
+                //     ->maxRange(30),
+
+                // Example: Regular filter
+                // Filter::make('status')
+                //     ->label('Status')
+                //     ->options([
+                //         FilterOption::make('active')->label('Active'),
+                //         FilterOption::make('inactive')->label('Inactive'),
+                //     ]),
             ])
             ->actions([
                 TableAction::make('delete')

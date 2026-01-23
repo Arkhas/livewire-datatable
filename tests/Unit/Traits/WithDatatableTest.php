@@ -9,6 +9,7 @@ use Arkhas\LivewireDatatable\Actions\ColumnActionGroup;
 use Arkhas\LivewireDatatable\Actions\TableAction;
 use Arkhas\LivewireDatatable\Filters\Filter;
 use Arkhas\LivewireDatatable\Filters\FilterOption;
+use Arkhas\LivewireDatatable\Filters\RangeFilter;
 use Arkhas\LivewireDatatable\Tests\Fixtures\TestModel;
 use Livewire\Livewire;
 use Livewire\Component;
@@ -575,4 +576,307 @@ test('it returns nothing when performRowAction model not found', function () {
     $method->invoke($test->instance(), 'edit', 99999);
 
     expect(true)->toBeTrue(); // Should not throw error
+});
+
+test('it normalizes range filter values when updated', function () {
+    $component = new class extends Component {
+        use WithDatatable;
+
+        public function setup(): void
+        {
+            $this->table(
+                (new EloquentTable(TestModel::query()))
+                    ->columns([Column::make('name')])
+                    ->filters([
+                        RangeFilter::make('date_range')
+                            ->column('created_at'),
+                    ])
+            );
+        }
+
+        public function render()
+        {
+            return view('livewire-datatable::datatable', [
+                'table' => $this->getTable(),
+                'data' => $this->getData(),
+            ]);
+        }
+    };
+
+    Livewire::component('test-range-filter', $component::class);
+
+    $test = Livewire::test($component::class);
+    
+    // Test with array format with start/end keys
+    $test->set('filters.date_range', ['start' => '2024-01-15', 'end' => '2024-01-17']);
+    
+    expect($test->get('filters.date_range'))->toBe(['start' => '2024-01-15', 'end' => '2024-01-17']);
+});
+
+test('it normalizes range filter with nested array format', function () {
+    $component = new class extends Component {
+        use WithDatatable;
+
+        public function setup(): void
+        {
+            $this->table(
+                (new EloquentTable(TestModel::query()))
+                    ->columns([Column::make('name')])
+                    ->filters([
+                        RangeFilter::make('date_range')
+                            ->column('created_at'),
+                    ])
+            );
+        }
+
+        public function render()
+        {
+            return view('livewire-datatable::datatable', [
+                'table' => $this->getTable(),
+                'data' => $this->getData(),
+            ]);
+        }
+    };
+
+    Livewire::component('test-range-filter-nested', $component::class);
+
+    $test = Livewire::test($component::class);
+    
+    // Test with nested array format
+    $test->set('filters.date_range', [['start' => '2024-01-15', 'end' => '2024-01-17']]);
+    
+    expect($test->get('filters.date_range'))->toBe(['start' => '2024-01-15', 'end' => '2024-01-17']);
+});
+
+test('it normalizes range filter with string format', function () {
+    $component = new class extends Component {
+        use WithDatatable;
+
+        public function setup(): void
+        {
+            $this->table(
+                (new EloquentTable(TestModel::query()))
+                    ->columns([Column::make('name')])
+                    ->filters([
+                        RangeFilter::make('date_range')
+                            ->column('created_at'),
+                    ])
+            );
+        }
+
+        public function render()
+        {
+            return view('livewire-datatable::datatable', [
+                'table' => $this->getTable(),
+                'data' => $this->getData(),
+            ]);
+        }
+    };
+
+    Livewire::component('test-range-filter-string', $component::class);
+
+    $test = Livewire::test($component::class);
+    
+    // Test with string format
+    $test->set('filters.date_range', ['2024-01-15/2024-01-17']);
+    
+    expect($test->get('filters.date_range'))->toBe(['2024-01-15/2024-01-17']);
+});
+
+test('it normalizes range filter with DateRange object', function () {
+    $component = new class extends Component {
+        use WithDatatable;
+
+        public function setup(): void
+        {
+            $this->table(
+                (new EloquentTable(TestModel::query()))
+                    ->columns([Column::make('name')])
+                    ->filters([
+                        RangeFilter::make('date_range')
+                            ->column('created_at'),
+                    ])
+            );
+        }
+
+        public function render()
+        {
+            return view('livewire-datatable::datatable', [
+                'table' => $this->getTable(),
+                'data' => $this->getData(),
+            ]);
+        }
+    };
+
+    Livewire::component('test-range-filter-object', $component::class);
+
+    // Create a mock DateRange object
+    $dateRange = new class {
+        public function start() {
+            return '2024-01-15';
+        }
+
+        public function end() {
+            return '2024-01-17';
+        }
+    };
+
+    $test = Livewire::test($component::class);
+    
+    // Use reflection to call the normalizeRangeFilterValue method
+    $reflection = new \ReflectionClass($test->instance());
+    $method = $reflection->getMethod('normalizeRangeFilterValue');
+    $method->setAccessible(true);
+    
+    $method->invoke($test->instance(), 'date_range', $dateRange);
+    
+    expect($test->get('filters.date_range'))->toBe(['start' => '2024-01-15', 'end' => '2024-01-17']);
+});
+
+test('it removes range filter when value is empty', function () {
+    $component = new class extends Component {
+        use WithDatatable;
+
+        public function setup(): void
+        {
+            $this->table(
+                (new EloquentTable(TestModel::query()))
+                    ->columns([Column::make('name')])
+                    ->filters([
+                        RangeFilter::make('date_range')
+                            ->column('created_at'),
+                    ])
+            );
+        }
+
+        public function render()
+        {
+            return view('livewire-datatable::datatable', [
+                'table' => $this->getTable(),
+                'data' => $this->getData(),
+            ]);
+        }
+    };
+
+    Livewire::component('test-range-filter-empty', $component::class);
+
+    $test = Livewire::test($component::class);
+    
+    // Set a value first
+    $test->set('filters.date_range', ['start' => '2024-01-15', 'end' => '2024-01-17']);
+    
+    // Use reflection to call the normalizeRangeFilterValue method with empty value
+    $reflection = new \ReflectionClass($test->instance());
+    $method = $reflection->getMethod('normalizeRangeFilterValue');
+    $method->setAccessible(true);
+    
+    $method->invoke($test->instance(), 'date_range', null);
+    
+    expect($test->get('filters'))->not->toHaveKey('date_range');
+});
+
+test('it handles updatedFilters for non-range filter', function () {
+    $component = new class extends Component {
+        use WithDatatable;
+
+        public function setup(): void
+        {
+            $this->table(
+                (new EloquentTable(TestModel::query()))
+                    ->columns([Column::make('name')])
+                    ->filters([
+                        Filter::make('status'),
+                    ])
+            );
+        }
+
+        public function render()
+        {
+            return view('livewire-datatable::datatable', [
+                'table' => $this->getTable(),
+                'data' => $this->getData(),
+            ]);
+        }
+    };
+
+    Livewire::component('test-non-range-filter', $component::class);
+
+    $test = Livewire::test($component::class);
+    
+    // Set a filter value - should not normalize since it's not a RangeFilter
+    $test->set('filters.status', ['active']);
+    
+    expect($test->get('filters.status'))->toBe(['active']);
+});
+
+test('it handles updatedFilters for unknown filter', function () {
+    $component = new class extends Component {
+        use WithDatatable;
+
+        public function setup(): void
+        {
+            $this->table(
+                (new EloquentTable(TestModel::query()))
+                    ->columns([Column::make('name')])
+            );
+        }
+
+        public function render()
+        {
+            return view('livewire-datatable::datatable', [
+                'table' => $this->getTable(),
+                'data' => $this->getData(),
+            ]);
+        }
+    };
+
+    Livewire::component('test-unknown-filter', $component::class);
+
+    $test = Livewire::test($component::class);
+    
+    // Set a filter value for unknown filter - should not error
+    $test->set('filters.unknown', ['value']);
+    
+    expect($test->get('filters.unknown'))->toBe(['value']);
+});
+
+test('it stores value as-is when it cannot be normalized', function () {
+    $component = new class extends Component {
+        use WithDatatable;
+
+        public function setup(): void
+        {
+            $this->table(
+                (new EloquentTable(TestModel::query()))
+                    ->columns([Column::make('name')])
+                    ->filters([
+                        RangeFilter::make('date_range')
+                            ->column('created_at'),
+                    ])
+            );
+        }
+
+        public function render()
+        {
+            return view('livewire-datatable::datatable', [
+                'table' => $this->getTable(),
+                'data' => $this->getData(),
+            ]);
+        }
+    };
+
+    Livewire::component('test-range-filter-unknown', $component::class);
+
+    $test = Livewire::test($component::class);
+    
+    // Use reflection to call the normalizeRangeFilterValue method with unnormalizable value
+    $reflection = new \ReflectionClass($test->instance());
+    $method = $reflection->getMethod('normalizeRangeFilterValue');
+    $method->setAccessible(true);
+    
+    // Pass an array that doesn't match any known format
+    $method->invoke($test->instance(), 'date_range', ['invalid', 'format']);
+    
+    // Should store as-is
+    expect($test->get('filters.date_range'))->toBe(['invalid', 'format']);
 });

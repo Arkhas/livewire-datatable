@@ -12,6 +12,7 @@ class FilterOption
     protected ?string $icon = null;
     protected ?Closure $countCallback = null;
     protected ?Closure $queryCallback = null;
+    protected ?int $count = null;
 
     public function __construct(string $name)
     {
@@ -85,10 +86,16 @@ class FilterOption
      */
     public function getCount(): ?int
     {
-        if ($this->countCallback) {
-            return call_user_func($this->countCallback);
+        if ($this->count !== null) {
+            return $this->count;
         }
 
+        if ($this->countCallback) {
+            $this->count = call_user_func($this->countCallback);
+            return $this->count;
+        }
+
+        $this->count = null;
         return null;
     }
 

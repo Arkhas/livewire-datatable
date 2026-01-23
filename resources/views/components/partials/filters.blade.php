@@ -42,8 +42,19 @@
         </flux:dropdown>
 
         @if($hasSelection)
-            <span class="inline-flex items-center h-full px-2.5 text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                {{ $selectedCount }} selected
+            <span class="inline-flex items-center gap-2 h-full px-2.5 text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 min-w-0">
+                @if($selectedCount === 1)
+                    @php
+                        $selectedValue = $filters[$filter->getName()][0];
+                        $selectedOption = $filter->getOption($selectedValue);
+                    @endphp
+                    @if($selectedOption && $selectedOption->getIcon())
+                        <flux:icon name="{{ strtolower($selectedOption->getIcon()) }}" class="size-4 text-zinc-500 flex-shrink-0" />
+                    @endif
+                    <span class="truncate">{{ $selectedOption ? $selectedOption->getLabel() : $selectedValue }}</span>
+                @else
+                    {{ $selectedCount }} selected
+                @endif
             </span>
         @endif
     </div>

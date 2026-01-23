@@ -81,19 +81,19 @@ class TasksTable extends Component
                 Column::make('status')
                     ->html(fn(Task $task) => ucfirst(str_replace('_', ' ', $task->status)))
                     ->icon(fn(Task $task) => match($task->status) {
-                        'todo' => 'Circle',
-                        'in_progress' => 'Timer',
-                        'done' => 'CheckCircle',
-                        'canceled' => 'CircleOff',
+                        'todo' => 'circle',
+                        'in_progress' => 'timer',
+                        'done' => 'check-circle',
+                        'canceled' => 'circle-x',
                         default => null,
                     }),
 
                 Column::make('priority')
                     ->html(fn(Task $task) => ucfirst($task->priority))
                     ->icon(fn(Task $task) => match($task->priority) {
-                        'low' => 'ArrowDown',
-                        'medium' => 'ArrowRight',
-                        'high' => 'ArrowUp',
+                        'low' => 'arrow-down',
+                        'medium' => 'arrow-right',
+                        'high' => 'arrow-up',
                         default => null,
                     }),
 
@@ -103,17 +103,17 @@ class TasksTable extends Component
                 ActionColumn::make()
                     ->action(
                         ColumnActionGroup::make()
-                            ->icon('Ellipsis')
+                            ->icon('ellipsis-vertical')
                             ->actions([
                                 ColumnAction::make('edit')
                                     ->label('Edit')
-                                    ->icon('Edit')
+                                    ->icon('pencil')
                                     ->url(fn(Task $task) => route('tasks.edit', $task->id))
                                     ->separator(),
 
                                 ColumnAction::make('delete')
                                     ->label('Delete')
-                                    ->icon('Trash2')
+                                    ->icon('trash-2')
                                     ->confirm(fn(Task $task) => [
                                         'title' => 'Delete Task',
                                         'message' => "Are you sure you want to delete '{$task->title}'?",
@@ -134,19 +134,19 @@ class TasksTable extends Component
                     ->options([
                         FilterOption::make('todo')
                             ->label('To Do')
-                            ->icon('Circle')
+                            ->icon('circle')
                             ->count(fn() => Task::where('status', 'todo')->count())
                             ->query(fn($query, $keyword) => $query->where('status', $keyword)),
 
                         FilterOption::make('in_progress')
                             ->label('In Progress')
-                            ->icon('Timer')
+                            ->icon('timer')
                             ->count(fn() => Task::where('status', 'in_progress')->count())
                             ->query(fn($query, $keyword) => $query->where('status', $keyword)),
 
                         FilterOption::make('done')
                             ->label('Done')
-                            ->icon('CheckCircle')
+                            ->icon('check-circle')
                             ->count(fn() => Task::where('status', 'done')->count())
                             ->query(fn($query, $keyword) => $query->where('status', $keyword)),
                     ]),
@@ -154,18 +154,18 @@ class TasksTable extends Component
                 Filter::make('priority')
                     ->label('Priority')
                     ->options([
-                        FilterOption::make('low')->label('Low')->icon('ArrowDown')
+                        FilterOption::make('low')->label('Low')->icon('arrow-down')
                             ->query(fn($query, $keyword) => $query->where('priority', $keyword)),
-                        FilterOption::make('medium')->label('Medium')->icon('ArrowRight')
+                        FilterOption::make('medium')->label('Medium')->icon('arrow-right')
                             ->query(fn($query, $keyword) => $query->where('priority', $keyword)),
-                        FilterOption::make('high')->label('High')->icon('ArrowUp')
+                        FilterOption::make('high')->label('High')->icon('arrow-up')
                             ->query(fn($query, $keyword) => $query->where('priority', $keyword)),
                     ]),
             ])
             ->actions([
                 TableAction::make('delete')
                     ->label('Delete')
-                    ->icon('Trash2', position: 'right')
+                    ->icon('trash-2', position: 'right')
                     ->props(['variant' => 'destructive', 'size' => 'sm'])
                     ->confirm(fn($ids) => [
                         'title' => 'Delete ' . count($ids) . ' Task(s)',
@@ -231,7 +231,7 @@ Filter::make('status')
     ->options([
         FilterOption::make('active')
             ->label('Active')
-            ->icon('CheckCircle')
+            ->icon('check-circle')
             ->count(fn() => Model::where('status', 'active')->count())
             ->query(fn($q, $keyword) => $q->where('status', $keyword)),
     ])
@@ -244,7 +244,7 @@ Filter::make('status')
 ```php
 TableAction::make('delete')
     ->label('Delete Selected')
-    ->icon('Trash2', position: 'right')
+    ->icon('trash-2', position: 'right')
     ->props(['variant' => 'danger', 'size' => 'sm'])
     ->confirm(fn($ids) => [...])
     ->handle(fn($ids) => [...])
@@ -255,7 +255,7 @@ TableAction::make('delete')
 ```php
 ColumnAction::make('edit')
     ->label('Edit')
-    ->icon('Edit')
+    ->icon('pencil')
     ->url(fn($model) => route('edit', $model->id))
     // OR
     ->handle(fn($model) => [...])
@@ -302,11 +302,53 @@ Views will be published to `resources/views/vendor/livewire-datatable/`.
 
 ## Icons
 
-This package uses Flux Pro icons. Make sure to install the icons you need:
+This package uses Lucide icons via Flux Pro. All icon names must be in kebab-case (e.g., `check-circle`, `trash-2`, `arrow-down`).
+
+Make sure to install the icons you need using the Flux icon command:
 
 ```bash
-php artisan flux:icon Circle Timer CheckCircle CircleOff ArrowDown ArrowRight ArrowUp Ellipsis Edit Trash2 Search Check X Settings2 Download ChevronLeft ChevronRight ChevronsLeft ChevronsRight PlusCircle
+php artisan flux:icon circle timer check-circle circle-x arrow-down arrow-right arrow-up ellipsis-vertical pencil trash-2 check x-mark arrow-down-tray adjustments-horizontal circle-plus chevron-left chevron-right chevrons-left chevrons-right chevrons-up-down
 ```
+
+### Icons Used in This Package
+
+The following icons are used throughout the package:
+
+**Column Icons:**
+- `circle` - Default/empty state
+- `timer` - In progress status
+- `check-circle` - Completed/done status
+- `circle-x` - Canceled/removed status
+- `arrow-down` - Low priority
+- `arrow-right` - Medium priority
+- `arrow-up` - High priority
+
+**Action Icons:**
+- `ellipsis-vertical` - Action menu trigger
+- `pencil` - Edit action
+- `trash-2` - Delete action
+
+**Filter Icons:**
+- `circle-plus` - Add filter button
+- `check` - Selected filter option
+
+**Toolbar Icons:**
+- `x-mark` - Reset filters button
+- `arrow-down-tray` - Export button
+- `adjustments-horizontal` - View options button
+
+**Pagination Icons:**
+- `chevron-left` - Previous page
+- `chevron-right` - Next page
+- `chevrons-left` - First page
+- `chevrons-right` - Last page
+
+**Sorting Icons:**
+- `arrow-up` - Ascending sort
+- `arrow-down` - Descending sort
+- `chevrons-up-down` - Sortable indicator
+
+You can use any Lucide icon by importing it with `php artisan flux:icon <icon-name>` and using it in your datatable configuration.
 
 ## License
 

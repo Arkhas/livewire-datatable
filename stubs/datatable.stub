@@ -43,16 +43,16 @@ class {{ class }} extends Component
                 ActionColumn::make()
                     ->action(
                         ColumnActionGroup::make()
-                            ->icon('Ellipsis')
+                            ->icon('ellipsis-vertical')
                             ->actions([
                                 ColumnAction::make('edit')
                                     ->label('Edit')
-                                    ->icon('Edit')
+                                    ->icon('pencil')
                                     ->url(fn({{ model }} $record) => route('{{ model }}.edit', $record->id)),
 
                                 ColumnAction::make('delete')
                                     ->label('Delete')
-                                    ->icon('Trash2')
+                                    ->icon('trash-2')
                                     ->confirm(fn({{ model }} $record) => [
                                         'title' => 'Delete {{ model }}',
                                         'message' => 'Are you sure you want to delete this record?',
@@ -72,7 +72,7 @@ class {{ class }} extends Component
             ->actions([
                 TableAction::make('delete')
                     ->label('Delete Selected')
-                    ->icon('Trash2')
+                    ->icon('trash-2')
                     ->props(['variant' => 'danger'])
                     ->confirm(fn($ids) => [
                         'title' => 'Delete ' . count($ids) . ' record(s)',

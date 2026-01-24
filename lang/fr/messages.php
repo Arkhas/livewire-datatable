@@ -5,7 +5,7 @@ return [
     'reset' => 'Réinitialiser',
     'export' => 'Exporter',
     'view' => 'Colonnes',
-    'search_columns' => 'Rechercher des colonnes...',
+    'search_columns' => 'Colonnes',
     'selected' => '{1} sélectionné|[2,*] sélectionnés',
     'rows_selected' => '{1} ligne sélectionnée.|[2,*] lignes sélectionnées.',
     'rows_selected_of' => '{1} sur :total ligne sélectionnée.|[2,*] sur :total lignes sélectionnées.',

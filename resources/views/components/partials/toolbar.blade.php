@@ -21,9 +21,14 @@
 
         {{-- Reset Filters --}}
         @if(!empty($filters))
-            <flux:button variant="ghost" size="sm" icon-trailing="x-mark" wire:click="resetFilters">
-                {{ __('livewire-datatable::messages.reset') }}
-            </flux:button>
+            <flux:button
+                variant="ghost"
+                size="sm"
+                icon="x-mark"
+                tooltip="{{ __('livewire-datatable::messages.reset') }}"
+                aria-label="{{ __('livewire-datatable::messages.reset') }}"
+                wire:click="resetFilters"
+            />
         @endif
     </div>
 
@@ -36,9 +41,12 @@
         {{-- Export --}}
         @if($table->isExportable())
             <flux:dropdown>
-                <flux:button  size="sm" icon="arrow-down-tray">
-                    {{ __('livewire-datatable::messages.export') }}
-                </flux:button>
+                <flux:button
+                    size="sm"
+                    icon="arrow-down-tray"
+                    tooltip="{{ __('livewire-datatable::messages.export') }}"
+                    aria-label="{{ __('livewire-datatable::messages.export') }}"
+                />
 
                 <flux:menu keep-open>
                     @foreach($table->getExportFormats() as $format)
@@ -53,9 +61,12 @@
         {{-- View Options (Column Toggle) --}}
         @if(count($table->getToggableColumns()) > 0)
             <flux:dropdown>
-                <flux:button  size="sm" icon-trailing="adjustments-horizontal">
-                    {{ __('livewire-datatable::messages.view') }}
-                </flux:button>
+                <flux:button
+                    size="sm"
+                    icon="adjustments-horizontal"
+                    tooltip="{{ __('livewire-datatable::messages.view') }}"
+                    aria-label="{{ __('livewire-datatable::messages.view') }}"
+                />
 
                 <flux:menu keep-open x-data="{ columnSearch: '' }">
                     {{-- Column Search --}}

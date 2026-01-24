@@ -3,10 +3,15 @@
 <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
     <div class="text-sm text-zinc-600 dark:text-zinc-400">
         <span x-show="selected.length > 0" x-cloak>
-            <span x-text="selected.length"></span> {{ __('livewire-datatable::messages.rows_selected_of', ['total' => $data->total()]) }}
+            <span x-text="selected.length"></span>
+            <span
+                x-text="selected.length === 1
+                    ? @json(trans_choice('livewire-datatable::messages.rows_selected_of', 1, ['total' => $data->total()]))
+                    : @json(trans_choice('livewire-datatable::messages.rows_selected_of', 2, ['total' => $data->total()]))"
+            ></span>
         </span>
         <span x-show="selected.length === 0">
-            {{ __('livewire-datatable::messages.showing_results', ['first' => $data->firstItem() ?? 0, 'last' => $data->lastItem() ?? 0, 'total' => $data->total()]) }}
+            {{ trans_choice('livewire-datatable::messages.showing_results', $data->total(), ['first' => $data->firstItem() ?? 0, 'last' => $data->lastItem() ?? 0, 'total' => $data->total()]) }}
         </span>
     </div>
 

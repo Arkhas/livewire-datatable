@@ -130,7 +130,7 @@ class FilterOption
             'name' => $this->name,
             'label' => $this->getLabel(),
             'icon' => $this->icon,
-            // 'count' => $this->getCount(),
+            'count' => $this->getCount(),
         ];
     }
 }

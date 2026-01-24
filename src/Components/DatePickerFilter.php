@@ -56,7 +56,7 @@ class DatePickerFilter extends Component
             if ($this->dateMode === 'range') {
                 if (is_array($dateValue) && isset($dateValue['start']) && isset($dateValue['end'])) {
                     $this->formattedValue = $dateValue['start'] . '/' . $dateValue['end'];
-                } elseif (is_array($dateValue) && isset($dateValue[0]) && str_contains($dateValue[0], '/')) {
+                } elseif (is_array($dateValue) && isset($dateValue[0]) && is_string($dateValue[0]) && str_contains($dateValue[0], '/')) {
                     $this->formattedValue = $dateValue[0];
                 } else {
                     $this->formattedValue = null;

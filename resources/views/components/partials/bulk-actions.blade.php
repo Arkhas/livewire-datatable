@@ -2,7 +2,12 @@
 
 <div class="flex items-center gap-2" x-show="selected.length > 0" x-cloak>
     <span class="text-sm text-zinc-600 dark:text-zinc-400">
-        <span x-text="selected.length"></span> {{ __('livewire-datatable::messages.rows_selected') }}
+        <span x-text="selected.length"></span>
+        <span
+            x-text="selected.length === 1
+                ? @json(trans_choice('livewire-datatable::messages.rows_selected', 1))
+                : @json(trans_choice('livewire-datatable::messages.rows_selected', 2))"
+        ></span>
     </span>
 
     <flux:dropdown>

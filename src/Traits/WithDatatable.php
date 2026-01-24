@@ -4,6 +4,7 @@ namespace Arkhas\LivewireDatatable\Traits;
 
 use Livewire\WithPagination;
 use Arkhas\LivewireDatatable\Table\EloquentTable;
+use Arkhas\LivewireDatatable\Filters\RangeFilter;
 
 trait WithDatatable
 {
@@ -343,6 +344,26 @@ trait WithDatatable
      */
     public function updatedPerPage(): void
     {
+        $this->resetPage();
+    }
+
+    /**
+     * Livewire hook: called when any value inside the `filters` array is updated.
+     *
+     * @param mixed       $value The updated value
+     * @param string|null $name  The key/path inside `filters` that was updated (e.g. "date_range" or "date_range.start")
+     */
+    public function updatedFilters(mixed $value, ?string $name = null): void
+    {
+        if ($name) {
+            $filterName = explode('.', $name)[0];
+            $filterConfig = $this->getTable()->getFilter($filterName);
+
+            if ($filterConfig instanceof RangeFilter) {
+                $this->normalizeRangeFilterValue($filterName, $this->filters[$filterName] ?? null);
+            }
+        }
+
         $this->resetPage();
     }
 

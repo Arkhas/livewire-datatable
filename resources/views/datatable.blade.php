@@ -65,6 +65,7 @@
                             <flux:table.column class="w-12"></flux:table.column>
                         @else
                             <flux:table.column
+                                    class="px-1!"
                                 :style="$column->getWidth() ? 'width: ' . $column->getWidth() : null"
                             >
                                 @if($column->isSortable())

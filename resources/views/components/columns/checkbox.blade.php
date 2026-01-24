@@ -1,6 +1,6 @@
 @props(['row'])
 
-<flux:table.cell class="w-8! px-0! py-1!">
+<flux:table.cell class="w-8! px-1! py-1!">
     <div class="flex items-center justify-center w-full">
         <input
             type="checkbox"

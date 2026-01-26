@@ -1,6 +1,6 @@
 @props(['row', 'column'])
 
-<flux:table.cell class="py-1! px-1!" :style="$column->getWidth() ? 'width: ' . $column->getWidth() : null">
+<flux:table.cell class="py-1! px-2!" :style="$column->getWidth() ? 'width: ' . $column->getWidth() : null">
     <div class="flex items-center gap-2">
         @if($column->hasIcon() && $column->getIcon($row))
             <flux:icon name="{{ strtolower($column->getIcon($row)) }}" class="size-4 text-zinc-500" />

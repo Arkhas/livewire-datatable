@@ -54,10 +54,12 @@ class DatatableExporter
      */
     public function toXlsx(): Response
     {
+        // @codeCoverageIgnoreStart
         // Check if Laravel Excel is installed
         if (!class_exists(\Maatwebsite\Excel\Facades\Excel::class)) {
             throw new \RuntimeException('XLSX export requires the maatwebsite/excel package. Install it with: composer require maatwebsite/excel');
         }
+        // @codeCoverageIgnoreEnd
 
         $filename = $this->table->getExportName() . '.xlsx';
 

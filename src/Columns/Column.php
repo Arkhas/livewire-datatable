@@ -5,6 +5,8 @@ namespace Arkhas\LivewireDatatable\Columns;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Str;
 
 class Column
 {
@@ -15,6 +17,7 @@ class Column
     protected bool $toggable = true;
     protected bool $hidden = false;
     protected ?Closure $htmlCallback = null;
+    protected ?Closure $bladeCallback = null;
     protected ?Closure $iconCallback = null;
     protected ?Closure $filterCallback = null;
     protected ?Closure $exportCallback = null;
@@ -161,10 +164,32 @@ class Column
     }
 
     /**
+     * Set the Blade callback for rendering cell content.
+     */
+    public function blade(Closure $callback): static
+    {
+        $this->bladeCallback = $callback;
+
+        return $this;
+    }
+
+    /**
      * Get the HTML content for a model.
      */
     public function getHtml(Model $model): string
     {
+        if ($this->bladeCallback) {
+            $bladeTemplate = (string) call_user_func($this->bladeCallback, $model);
+            
+            // Generate variable name from model class name (e.g., Task -> task, TestModel -> testModel)
+            $variableName = Str::camel(class_basename($model));
+            
+            return Blade::render($bladeTemplate, [
+                'model' => $model,
+                $variableName => $model,
+            ]);
+        }
+
         if ($this->htmlCallback) {
             return (string) call_user_func($this->htmlCallback, $model);
         }

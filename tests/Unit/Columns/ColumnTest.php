@@ -357,3 +357,74 @@ test('it supports fluent api', function () {
         ->and($column->hasIcon())->toBeTrue()
         ->and($column->hasFilter())->toBeTrue();
 });
+
+test('it can use blade callback to render blade template', function () {
+    $model = TestModel::create([
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+    ]);
+
+    $column = Column::make('name')
+        ->blade(fn($model) => '{{ $model->name }}');
+
+    $html = $column->getHtml($model);
+
+    expect($html)->toBe('John Doe');
+});
+
+test('it can use blade callback with model variable name', function () {
+    $model = TestModel::create([
+        'name' => 'Jane Doe',
+        'email' => 'jane@example.com',
+    ]);
+
+    $column = Column::make('name')
+        ->blade(fn(TestModel $testModel) => '{{ $testModel->name }}');
+
+    $html = $column->getHtml($model);
+
+    expect($html)->toBe('Jane Doe');
+});
+
+test('it can use blade callback with html tags', function () {
+    $model = TestModel::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+    ]);
+
+    $column = Column::make('name')
+        ->blade(fn($model) => '<strong>{{ $model->name }}</strong>');
+
+    $html = $column->getHtml($model);
+
+    expect($html)->toBe('<strong>Test User</strong>');
+});
+
+test('blade callback has priority over html callback', function () {
+    $model = TestModel::create([
+        'name' => 'Priority Test',
+        'email' => 'test@example.com',
+    ]);
+
+    $column = Column::make('name')
+        ->html(fn($model) => '<em>HTML</em>')
+        ->blade(fn($model) => '<strong>{{ $model->name }}</strong>');
+
+    $html = $column->getHtml($model);
+
+    expect($html)->toBe('<strong>Priority Test</strong>');
+});
+
+test('it can use blade callback with multiple variables', function () {
+    $model = TestModel::create([
+        'name' => 'Multi Var',
+        'email' => 'multi@example.com',
+    ]);
+
+    $column = Column::make('name')
+        ->blade(fn($model) => '{{ $model->name }} - {{ $testModel->email }}');
+
+    $html = $column->getHtml($model);
+
+    expect($html)->toBe('Multi Var - multi@example.com');
+});

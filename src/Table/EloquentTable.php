@@ -19,10 +19,10 @@ class EloquentTable
     use HasSearch;
     use HasExport;
 
-    protected Builder $query;
+    protected $query;
     protected string $exportName = 'export';
 
-    public function __construct(Builder $query)
+    public function __construct($query)
     {
         $this->query = $query;
     }

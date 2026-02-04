@@ -5,6 +5,7 @@ namespace Arkhas\LivewireDatatable\Export;
 use Illuminate\Support\Collection;
 use Arkhas\LivewireDatatable\Table\EloquentTable;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class DatatableExporter
 {
@@ -51,7 +52,7 @@ class DatatableExporter
     /**
      * Export to XLSX (requires maatwebsite/excel package).
      */
-    public function toXlsx(): StreamedResponse
+    public function toXlsx(): Response
     {
         // Check if Laravel Excel is installed
         if (!class_exists(\Maatwebsite\Excel\Facades\Excel::class)) {
@@ -109,7 +110,7 @@ class DatatableExporter
     /**
      * Export based on format.
      */
-    public function export(string $format = 'csv'): StreamedResponse
+    public function export(string $format = 'csv'): Response
     {
         return match ($format) {
             'xlsx' => $this->toXlsx(),

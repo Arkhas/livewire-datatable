@@ -7,6 +7,7 @@ use Arkhas\LivewireDatatable\Columns\CheckboxColumn;
 use Arkhas\LivewireDatatable\Columns\ActionColumn;
 use Arkhas\LivewireDatatable\Tests\Fixtures\TestModel;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 function createExporterTable(): EloquentTable
 {
@@ -226,9 +227,9 @@ test('it can export to xlsx when package is installed', function () {
 
     $response = $exporter->toXlsx();
 
-    expect($response)->toBeInstanceOf(StreamedResponse::class);
+    expect($response)->toBeInstanceOf(Response::class);
     
-    // Execute the response to ensure the callback runs (covers lines 61-66)
+    // Execute the response to ensure it works (covers lines 61-66)
     ob_start();
     $response->sendContent();
     $content = ob_get_clean();

@@ -16,10 +16,17 @@ abstract class TestCase extends BaseTestCase
      */
     protected function getPackageProviders($app): array
     {
-        return [
+        $providers = [
             LivewireServiceProvider::class,
             LivewireDatatableServiceProvider::class,
         ];
+
+        // Register Maatwebsite Excel service provider if available
+        if (class_exists(\Maatwebsite\Excel\ExcelServiceProvider::class)) {
+            $providers[] = \Maatwebsite\Excel\ExcelServiceProvider::class;
+        }
+
+        return $providers;
     }
 
     /**

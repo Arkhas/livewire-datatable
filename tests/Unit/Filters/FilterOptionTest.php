@@ -50,6 +50,42 @@ test('it can set count callback', function () {
     expect($option->getCount())->toBe(42);
 });
 
+test('it can set count directly with int', function () {
+    $option = FilterOption::make('active')
+        ->count(42);
+
+    expect($option->getCount())->toBe(42);
+});
+
+test('it returns direct int count immediately', function () {
+    $option = FilterOption::make('active')
+        ->count(100);
+
+    expect($option->getCount())->toBe(100);
+});
+
+test('it can use direct int count in toArray', function () {
+    $option = FilterOption::make('active')
+        ->label('Active')
+        ->icon('check')
+        ->count(25);
+
+    $array = $option->toArray();
+
+    expect($array['count'])->toBe(25);
+});
+
+test('it supports both int and closure count methods', function () {
+    $optionWithInt = FilterOption::make('active')
+        ->count(10);
+
+    $optionWithClosure = FilterOption::make('inactive')
+        ->count(fn() => 20);
+
+    expect($optionWithInt->getCount())->toBe(10)
+        ->and($optionWithClosure->getCount())->toBe(20);
+});
+
 test('it returns null count by default', function () {
     $option = FilterOption::make('active');
 

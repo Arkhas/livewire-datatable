@@ -72,11 +72,15 @@ class FilterOption
     }
 
     /**
-     * Set the count callback.
+     * Set the count callback or direct count value.
      */
-    public function count(Closure $callback): static
+    public function count(Closure|int $count): static
     {
-        $this->countCallback = $callback;
+        if (is_int($count)) {
+            $this->count = $count;
+        } else {
+            $this->countCallback = $count;
+        }
 
         return $this;
     }

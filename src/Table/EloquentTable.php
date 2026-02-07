@@ -2,7 +2,7 @@
 
 namespace Arkhas\LivewireDatatable\Table;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder;
 use Arkhas\LivewireDatatable\Table\Concerns\HasColumns;
 use Arkhas\LivewireDatatable\Table\Concerns\HasFilters;
 use Arkhas\LivewireDatatable\Table\Concerns\HasActions;
@@ -19,10 +19,10 @@ class EloquentTable
     use HasSearch;
     use HasExport;
 
-    protected $query;
+    protected Builder $query;
     protected string $exportName = 'export';
 
-    public function __construct($query)
+    public function __construct(Builder $query)
     {
         $this->query = $query;
     }

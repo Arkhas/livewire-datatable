@@ -13,6 +13,7 @@ class FilterOption
     protected ?Closure $countCallback = null;
     protected ?Closure $queryCallback = null;
     protected ?int $count = null;
+    protected bool $isDefault = false;
 
     public function __construct(string $name)
     {
@@ -114,6 +115,24 @@ class FilterOption
     }
 
     /**
+     * Mark this option as default.
+     */
+    public function default(bool $isDefault = true): static
+    {
+        $this->isDefault = $isDefault;
+
+        return $this;
+    }
+
+    /**
+     * Check if this option is default.
+     */
+    public function isDefault(): bool
+    {
+        return $this->isDefault;
+    }
+
+    /**
      * Apply the option query to a builder.
      */
     public function applyToQuery(Builder $query, string $keyword): void
@@ -135,6 +154,7 @@ class FilterOption
             'label' => $this->getLabel(),
             'icon' => $this->icon,
             'count' => $this->getCount(),
+            'isDefault' => $this->isDefault,
         ];
     }
 }

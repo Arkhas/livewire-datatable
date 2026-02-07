@@ -139,6 +139,22 @@ class Filter
     }
 
     /**
+     * Get default options for this filter.
+     */
+    public function getDefaultOptions(): array
+    {
+        $defaultOptions = [];
+        
+        foreach ($this->options as $option) {
+            if ($option->isDefault()) {
+                $defaultOptions[] = $option->getName();
+            }
+        }
+
+        return $defaultOptions;
+    }
+
+    /**
      * Get the count of selected values.
      */
     public function getSelectedCount(array $values): int

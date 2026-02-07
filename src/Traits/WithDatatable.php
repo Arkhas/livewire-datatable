@@ -33,6 +33,7 @@ trait WithDatatable
     {
         $this->perPage = config('livewire-datatable.per_page', 10);
         $this->setup();
+        $this->initializeDefaultFilters();
     }
 
     /**
@@ -113,7 +114,27 @@ trait WithDatatable
     public function resetFilters(): void
     {
         $this->filters = [];
+        $this->initializeDefaultFilters();
         $this->resetPage();
+    }
+
+    /**
+     * Initialize default filters.
+     */
+    protected function initializeDefaultFilters(): void
+    {
+        $table = $this->getTable();
+        
+        foreach ($table->getFilters() as $filter) {
+            $defaultOptions = $filter->getDefaultOptions();
+            
+            if (!empty($defaultOptions)) {
+                // Only set default if the filter is not already set
+                if (!isset($this->filters[$filter->getName()]) || empty($this->filters[$filter->getName()])) {
+                    $this->filters[$filter->getName()] = $defaultOptions;
+                }
+            }
+        }
     }
 
     /**

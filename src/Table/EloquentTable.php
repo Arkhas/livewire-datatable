@@ -8,7 +8,8 @@ use Arkhas\LivewireDatatable\Table\Concerns\HasActions;
 use Arkhas\LivewireDatatable\Table\Concerns\HasPagination;
 use Arkhas\LivewireDatatable\Table\Concerns\HasSearch;
 use Arkhas\LivewireDatatable\Table\Concerns\HasExport;
-use Illuminate\Database\Schema\Builder;
+use Illuminate\Contracts\Database\Query\Builder;
+
 
 class EloquentTable
 {

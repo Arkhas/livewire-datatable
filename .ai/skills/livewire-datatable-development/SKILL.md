@@ -70,7 +70,7 @@ Column::make('name')
     ->toggable()
     ->hidden(false)
     ->html(fn($model) => '<a href="...">' . $model->name . '</a>')
-    ->icon(fn($model) => match($model->status) { 'active' => 'check-circle', default => null })
+    ->icon(fn($model) => match($model->status) { 'active' => 'circle-check', default => null })
     ->filter(fn($query, $v) => $query->where(...))
     ->exportAs(fn($model) => $model->formatted_value)
 ```
@@ -179,11 +179,12 @@ $table->exportName('tasks-' . date('Y-m-d'))
 
 ## Icônes (Flux / Lucide)
 
-Toutes les icônes sont en kebab-case (`check-circle`, `trash-2`, `arrow-down`). Installer les icônes Flux :
+Toutes les icônes sont en kebab-case Lucide (`circle-check`, `trash-2`, `arrow-down`). Installer les icônes via :
 
 ```bash
-php artisan flux:icon circle timer check-circle ellipsis-vertical pencil trash-2
+php artisan livewire-datatable:install
 ```
+Ou manuellement : `php artisan flux:icon circle timer circle-check ellipsis-vertical pencil trash-2` (noms Lucide).
 
 ## Configuration
 

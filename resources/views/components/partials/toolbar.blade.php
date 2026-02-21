@@ -24,7 +24,7 @@
             <flux:button
                 variant="ghost"
                 size="sm"
-                icon="x-mark"
+                icon="x"
                 tooltip="{{ __('livewire-datatable::messages.reset') }}"
                 aria-label="{{ __('livewire-datatable::messages.reset') }}"
                 wire:click="resetFilters"
@@ -43,7 +43,7 @@
             <flux:dropdown>
                 <flux:button
                     size="sm"
-                    icon="arrow-down-tray"
+                    icon="download"
                     tooltip="{{ __('livewire-datatable::messages.export') }}"
                     aria-label="{{ __('livewire-datatable::messages.export') }}"
                 />
@@ -63,7 +63,7 @@
             <flux:dropdown>
                 <flux:button
                     size="sm"
-                    icon="adjustments-horizontal"
+                    icon="sliders-horizontal"
                     tooltip="{{ __('livewire-datatable::messages.view') }}"
                     aria-label="{{ __('livewire-datatable::messages.view') }}"
                 />
@@ -73,7 +73,7 @@
                     <div class="px-2 pb-2">
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-                                <flux:icon name="magnifying-glass" class="size-4 text-zinc-400 dark:text-zinc-500" />
+                                <flux:icon name="search" class="size-4 text-zinc-400 dark:text-zinc-500" />
                             </div>
                             <input
                                 type="text"

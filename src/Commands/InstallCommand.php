@@ -22,14 +22,14 @@ class InstallCommand extends Command
     protected $description = 'Install Livewire Datatable: Flux icons and Tailwind @source for package views';
 
     /**
-     * Icons used by the datatable package (Flux / Lucide).
+     * Icons used by the datatable package (Lucide names for flux:icon fetch).
      *
      * @var array<int, string>
      */
     protected array $icons = [
         'circle',
         'timer',
-        'check-circle',
+        'circle-check',      // Lucide name (Heroicons: check-circle)
         'circle-x',
         'arrow-down',
         'arrow-right',
@@ -38,16 +38,16 @@ class InstallCommand extends Command
         'pencil',
         'trash-2',
         'check',
-        'x-mark',
-        'arrow-down-tray',
-        'adjustments-horizontal',
+        'x',                 // Lucide name (Heroicons: x-mark)
+        'download',          // Lucide name (Heroicons: arrow-down-tray)
+        'sliders-horizontal', // Lucide name (Heroicons: adjustments-horizontal)
         'circle-plus',
         'chevron-left',
         'chevron-right',
         'chevrons-left',
         'chevrons-right',
         'chevrons-up-down',
-        'magnifying-glass',
+        'search',            // Lucide name (Heroicons: magnifying-glass)
     ];
 
     /**

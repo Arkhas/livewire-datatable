@@ -85,7 +85,7 @@ class TasksTable extends Component
                     ->icon(fn(Task $task) => match($task->status) {
                         'todo' => 'circle',
                         'in_progress' => 'timer',
-                        'done' => 'check-circle',
+                        'done' => 'circle-check',
                         'canceled' => 'circle-x',
                         default => null,
                     }),
@@ -148,7 +148,7 @@ class TasksTable extends Component
 
                         FilterOption::make('done')
                             ->label('Done')
-                            ->icon('check-circle')
+                            ->icon('circle-check')
                             ->count(fn() => Task::where('status', 'done')->count())
                             ->query(fn($query, $keyword) => $query->where('status', $keyword)),
                     ]),
@@ -258,7 +258,7 @@ Filter::make('status')
     ->options([
         FilterOption::make('active')
             ->label('Active')
-            ->icon('check-circle')
+            ->icon('circle-check')
             ->count(fn() => Model::where('status', 'active')->count())
             ->query(fn($q, $keyword) => $q->where('status', $keyword)),
     ])
@@ -415,22 +415,22 @@ Views will be published to `resources/views/vendor/livewire-datatable/`.
 
 ## Icons
 
-This package uses Lucide icons via Flux Pro. All icon names must be in kebab-case (e.g., `check-circle`, `trash-2`, `arrow-down`).
+This package uses Lucide icons via Flux. Icon names must match Lucide’s kebab-case names (e.g. `circle-check`, `trash-2`, `arrow-down`).
 
-Make sure to install the icons you need using the Flux icon command:
+Install all icons and add the Tailwind `@source` for package views:
 
 ```bash
-php artisan flux:icon circle timer check-circle circle-x arrow-down arrow-right arrow-up ellipsis-vertical pencil trash-2 check x-mark arrow-down-tray adjustments-horizontal circle-plus chevron-left chevron-right chevrons-left chevrons-right chevrons-up-down
+php artisan livewire-datatable:install
 ```
 
 ### Icons Used in This Package
 
-The following icons are used throughout the package:
+The following Lucide icons are used:
 
 **Column Icons:**
 - `circle` - Default/empty state
 - `timer` - In progress status
-- `check-circle` - Completed/done status
+- `circle-check` - Completed/done status
 - `circle-x` - Canceled/removed status
 - `arrow-down` - Low priority
 - `arrow-right` - Medium priority
@@ -446,9 +446,10 @@ The following icons are used throughout the package:
 - `check` - Selected filter option
 
 **Toolbar Icons:**
-- `x-mark` - Reset filters button
-- `arrow-down-tray` - Export button
-- `adjustments-horizontal` - View options button
+- `x` - Reset filters button
+- `download` - Export button
+- `sliders-horizontal` - View options button
+- `search` - Search columns (magnifying glass)
 
 **Pagination Icons:**
 - `chevron-left` - Previous page

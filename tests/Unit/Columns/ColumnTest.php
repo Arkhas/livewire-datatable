@@ -223,9 +223,9 @@ test('it can get icon from model', function () {
     ]);
 
     $column = Column::make('status')
-        ->icon(fn($model) => $model->status === 'active' ? 'check-circle' : 'x-circle');
+        ->icon(fn($model) => $model->status === 'active' ? 'circle-check' : 'circle-x');
 
-    expect($column->getIcon($model))->toBe('check-circle');
+    expect($column->getIcon($model))->toBe('circle-check');
 });
 
 test('it returns null icon when no callback', function () {

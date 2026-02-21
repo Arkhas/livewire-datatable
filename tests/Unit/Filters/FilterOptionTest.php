@@ -32,9 +32,9 @@ test('it can set label', function () {
 
 test('it can set icon', function () {
     $option = FilterOption::make('active')
-        ->icon('check-circle');
+        ->icon('circle-check');
 
-    expect($option->getIcon())->toBe('check-circle');
+    expect($option->getIcon())->toBe('circle-check');
 });
 
 test('it returns null icon by default', function () {

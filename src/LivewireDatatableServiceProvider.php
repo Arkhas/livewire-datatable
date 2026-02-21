@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Arkhas\LivewireDatatable\Components\Datatable;
 use Arkhas\LivewireDatatable\Components\DatePickerFilter;
+use Arkhas\LivewireDatatable\Commands\InstallCommand;
 use Arkhas\LivewireDatatable\Commands\MakeDatatableCommand;
 
 class LivewireDatatableServiceProvider extends ServiceProvider
@@ -62,6 +63,7 @@ class LivewireDatatableServiceProvider extends ServiceProvider
 
             // Register commands
             $this->commands([
+                InstallCommand::class,
                 MakeDatatableCommand::class,
             ]);
         }
